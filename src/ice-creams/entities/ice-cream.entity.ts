@@ -3,39 +3,37 @@ import { HydratedDocument } from 'mongoose';
 
 export type IceCreamDocument = HydratedDocument<IceCream>;
 
+export class Languages {
+  pl: { name: string; description: string; brand: string };
+  en: { name: string; description: string; brand: string };
+}
+
 @Schema()
 export class IceCream {
-    _id: string;
+  _id: string;
 
-    @Prop()
-    brand_pl: string;
+  @Prop()
+  name: string;
 
-    @Prop()
-    name_pl: string;
+  @Prop()
+  description: string;
 
-    @Prop()
-    description_pl: string;
+  @Prop()
+  brand: string;
 
-    @Prop()
-    brand_en: string;
+  @Prop()
+  rating: number;
 
-    @Prop()
-    name_en: string;
+  @Prop()
+  image: string;
 
-    @Prop()
-    description_en: string;
+  @Prop()
+  vegan: boolean;
 
-    @Prop()
-    rating: number;
+  @Prop()
+  tags: Array<string>;
 
-    @Prop()
-    image: string;
-
-    @Prop()
-    vegan: boolean;
-    
-    @Prop()
-    tags: Array<string>;
+  languages: Languages;
 }
 
 export const IceCreamSchema = SchemaFactory.createForClass(IceCream);
