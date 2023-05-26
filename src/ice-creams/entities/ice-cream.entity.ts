@@ -4,34 +4,34 @@ import { HydratedDocument } from 'mongoose';
 export type IceCreamDocument = HydratedDocument<IceCream>;
 
 export class Languages {
-  pl: { name: String; description: String; brand: String };
-  en: { name: String; description: String; brand: String };
+  pl: { name: string; description: string; brand: string };
+  en: { name: string; description: string; brand: string };
 }
 
 @Schema()
 export class IceCream {
-  _id: String;
+  _id: string;
 
   @Prop()
-  name: String;
+  name: string;
 
   @Prop()
-  description: String;
+  description: string;
 
   @Prop()
-  brand: String;
+  brand: string;
 
   @Prop()
-  rating: Number;
+  rating: number;
 
   @Prop()
-  image: String;
+  image: string;
 
   @Prop()
-  vegan: Boolean;
+  vegan: boolean;
 
   @Prop()
-  tags: Array<String>;
+  tags: Array<string>;
 
   languages: Languages;
 }
