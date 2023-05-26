@@ -6,23 +6,23 @@ import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 export class IceCreamsController {
   constructor(private readonly iceCreamsService: IceCreamsService) {}
 
+  // @Post()
+  // create(@Body() createIceCreamDto: CreateIceCreamDto) {
+  //   return this.iceCreamsService.create(createIceCreamDto);
+  // }
+
   @Post()
-  create(@Body() createIceCreamDto: CreateIceCreamDto) {
-    return this.iceCreamsService.create(createIceCreamDto);
+  findBySignificantPropertiesPL(@Body() searchQueryPL: string) {
+    return this.iceCreamsService.findBySignificantPropertiesPL(searchQueryPL);
   }
 
-  @Get()
-  findAll() {
-    return this.iceCreamsService.findAll();
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.iceCreamsService.findOne(+id);
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.iceCreamsService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.iceCreamsService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.iceCreamsService.remove(+id);
+  // }
 }

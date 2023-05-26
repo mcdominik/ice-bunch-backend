@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule.forRoot({}));
-  const config = new DocumentBuilder().setTitle('iceBunch').build();
+  const config = new DocumentBuilder().setTitle('icebunch').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
   app.enableCors();
