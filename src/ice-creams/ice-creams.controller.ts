@@ -12,8 +12,8 @@ export class IceCreamsController {
   // }
 
   @Post()
-  findBySignificantPropertiesPL(@Body() searchQueryPL: string) {
-    return this.iceCreamsService.findBySignificantPropertiesPL(searchQueryPL);
+  findBySignificantProperties (@Body() searchQuery: string, veganOnly: boolean) {
+    return this.iceCreamsService.findBySignificantProperties(searchQuery, veganOnly);
   }
 
   // @Get(':id')

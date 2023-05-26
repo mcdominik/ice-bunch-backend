@@ -17,26 +17,27 @@ export class IceCreamsService {
     return this.iceCreamModel.find();
   }
 
-  async findBySignificantPropertiesPL(searchQueryPL: string) {
-    console.log(searchQueryPL)
+  async findBySignificantProperties(searchQuery: string, veganOnly: boolean) {
+    if (!veganOnly) {
     const iceCreams = await this.iceCreamModel.find({
       $or: [
-        { brand_pl: 'ben' }, 
-        { name_pl: 'ben' },
-        { description_pl: 'ben'}
+        { brand: { $regex: new RegExp(searchQuery, "i")} }, 
+        { name: { $regex: new RegExp(searchQuery, "i") } }, 
+        { description: { $regex: new RegExp(searchQuery, "i") }},
       ],
     })
     return iceCreams
-  }
-
-  async findBySignificantPropertiesEN(searchQueryEN: string) {
+    }
     const iceCreams = await this.iceCreamModel.find({
-      $or: [
-        { brand: { $regex: new RegExp(searchQueryEN, "i")} }, // Case-insensitive search on brand
-        { name: { $regex: new RegExp(searchQueryEN, "i") } }, // Case-insensitive search on name
-        { description: { $regex: new RegExp(searchQueryEN, "i") }}, // Case-insensitive search on description
-      ],
-    })
+      $and:
+        [{ brand: { $regex: new RegExp(searchQuery, "i")} },
+        {$or: [
+          { brand: { $regex: new RegExp(searchQuery, "i")} }, 
+          { name: { $regex: new RegExp(searchQuery, "i") } }, 
+          { description: { $regex: new RegExp(searchQuery, "i") }},
+        ]}
+      ]
+          })
     return iceCreams
   }
 }
