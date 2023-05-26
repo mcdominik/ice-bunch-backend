@@ -10,28 +10,28 @@ export class Languages {
 
 @Schema()
 export class IceCream {
-  _id: string;
+  _id: String;
 
   @Prop()
-  name: string;
+  name: String;
 
   @Prop()
-  description: string;
+  description: String;
 
   @Prop()
-  brand: string;
+  brand: String;
 
   @Prop()
-  rating: number;
+  rating: Number;
 
   @Prop()
-  image: string;
+  image: String;
 
   @Prop()
-  vegan: boolean;
+  vegan: Boolean;
 
   @Prop()
-  tags: Array<string>;
+  tags: Array<String>;
 
   languages: Languages;
 }
