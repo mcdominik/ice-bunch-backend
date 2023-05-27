@@ -1,19 +1,20 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { IceCreamsService } from './ice-creams.service';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
+import { SearchQueryDto } from './dto/search-query.dto';
 
 @Controller('ice-creams')
 export class IceCreamsController {
   constructor(private readonly iceCreamsService: IceCreamsService) {}
 
-  // @Post()
-  // create(@Body() createIceCreamDto: CreateIceCreamDto) {
-  //   return this.iceCreamsService.create(createIceCreamDto);
-  // }
+  @Post('add')
+  addNew(@Body() dto: CreateIceCreamDto) {
+    return this.iceCreamsService.addNew(dto);
+  }
 
   @Post()
-  findBySignificantProperties (@Body() searchQuery: string, veganOnly: boolean) {
-    return this.iceCreamsService.findBySignificantProperties(searchQuery, veganOnly);
+  findBySignificantProperties (@Body() dto: SearchQueryDto) {
+    return this.iceCreamsService.findBySignificantProperties(dto);
   }
 
   // @Get(':id')

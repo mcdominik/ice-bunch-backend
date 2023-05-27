@@ -1,4 +1,4 @@
-import { IsAlpha, IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateIceCreamDto {
     @IsString()
@@ -19,6 +19,10 @@ export class CreateIceCreamDto {
     image: string;
     @IsBoolean()
     vegan: boolean;
+    @IsString()
+    type: string;
     @IsArray()
-    tags: Array<string>;
+    tags: Array<any>;
+    @IsOptional()
+    barcode: string;
 }
