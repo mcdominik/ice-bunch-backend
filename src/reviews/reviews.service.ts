@@ -43,8 +43,8 @@ export class ReviewsService {
     return this.reviewModel.findById(id);
   }
 
-  getUserAllReviews(userId: string) {
-    return this.reviewModel.find({
+  async getUserAllReviews(userId: string) {
+    return await this.reviewModel.find({
       userId
     })
   }

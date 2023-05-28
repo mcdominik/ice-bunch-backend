@@ -22,8 +22,13 @@ export class ReviewsController {
     return this.reviewsService.findOne(reviewId);
   }
 
-  @Get(':userId')
+  @Get('user/:userId')
   getUserAllReviews(@Param('userId') userId: string) {
     return this.reviewsService.getUserAllReviews(userId)
+  }
+
+  @Get('ice-cream/:iceCreamId')
+  getIceCreamAllReviews(@Param('iceCreamId') iceCreamId: string) {
+    return this.reviewsService.getIceCreamAllReviews(iceCreamId)
   }
 }
