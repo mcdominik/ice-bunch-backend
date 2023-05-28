@@ -49,6 +49,12 @@ export class ReviewsService {
     })
   }
 
+  getIceCreamAllReviews(iceCreamId: string) {
+    return this.reviewModel.find({
+      iceCreamId
+    })
+  }
+
   async findOne(reviewId: string) {
     return this.reviewModel.findOne({_id: reviewId});
   }
