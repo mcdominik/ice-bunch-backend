@@ -16,7 +16,6 @@ import { MailsModule } from 'src/mails/mails.module';
     UsersModule,
     HttpModule,
     ConfigModule.forRoot(),
-    //UsersModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

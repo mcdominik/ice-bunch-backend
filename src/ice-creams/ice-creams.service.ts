@@ -26,40 +26,36 @@ export class IceCreamsService {
     }
 
     const sortKey_ = dto.sortKey
+    if (dto.isVegan) {
+      const iceCreams = await this.iceCreamModel.find({
+        $and: [{
+          $or: [
+            { brand_pl: { $regex: field_regex} }, 
+            { name_pl: { $regex: field_regex} }, 
+            { description_pl: { $regex: field_regex} },
+            { brand_en: { $regex: field_regex} }, 
+            { name_en: { $regex: field_regex} }, 
+            { description_en: { $regex: field_regex} },
+          ]},
+          {vegan: dto.isVegan}
+        ]
+      }).sort({rating: sortKey_}).limit(24).skip((dto.page-1)*ICES_ON_PAGE)
+      return iceCreams
+    } else {
+      const iceCreams = await this.iceCreamModel.find({
+          $or: [
+            { brand_pl: { $regex: field_regex} }, 
+            { name_pl: { $regex: field_regex} }, 
+            { description_pl: { $regex: field_regex} },
+            { brand_en: { $regex: field_regex} }, 
+            { name_en: { $regex: field_regex} }, 
+            { description_en: { $regex: field_regex} },
+          ]
+      }).sort({rating: sortKey_}).limit(24).skip((dto.page-1)*ICES_ON_PAGE)
+      return iceCreams
+    }
 
-    const iceCreams = await this.iceCreamModel.find({
-      $and: [{
-        $or: [
-          { brand_pl: { $regex: field_regex} }, 
-          { name_pl: { $regex: field_regex} }, 
-          { description_pl: { $regex: field_regex} },
-          { brand_en: { $regex: field_regex} }, 
-          { name_en: { $regex: field_regex} }, 
-          { description_en: { $regex: field_regex} },
-        ]},
-        {vegan: dto.isVegan}
-      ]
-    }).sort({rating: sortKey_}).limit(24).skip((dto.page-1)*ICES_ON_PAGE)
-    return iceCreams
   }
-
-  // async findAndSortDecreasing(dto: SearchQueryDto) {
-  //   const field_regex = new RegExp(dto.searchField, "i")
-  //   const iceCreams = await this.iceCreamModel.find({
-  //     $and: [{
-  //       $or: [
-  //         { brand_pl: { $regex: field_regex} }, 
-  //         { name_pl: { $regex: field_regex} }, 
-  //         { description_pl: { $regex: field_regex} },
-  //         { brand_en: { $regex: field_regex} }, 
-  //         { name_en: { $regex: field_regex} }, 
-  //         { description_en: { $regex: field_regex} },
-  //       ]},
-  //       {vegan: dto.isVegan}
-  //     ]
-  //   }).sort({rating: -1}).limit(24).skip(0)
-  //   return iceCreams
-  // }
 
   async getOneById(iceCreamId: string) {
     return await this.iceCreamModel.findById(iceCreamId);

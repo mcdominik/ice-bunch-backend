@@ -1,4 +1,15 @@
-import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, IsNotEmpty } from 'class-validator';
+
+
+export enum IceCreamType {
+    PINT = "PINT",
+    TUB = "TUB",
+    BAR = "BAR",
+    CONE = "CONE",
+    POPSICLE = 'POPSICLE',
+    SANDWICH = 'SANDWICH',
+    OTHER = 'OTHER'
+  }
 
 export class CreateIceCreamDto {
     @IsString()
@@ -19,10 +30,10 @@ export class CreateIceCreamDto {
     image: string;
     @IsBoolean()
     vegan: boolean;
-    @IsString()
-    type: string;
+    @IsNotEmpty()
+    type: IceCreamType;
     @IsArray()
     tags: Array<any>;
     @IsOptional()
-    barcode: string;
+    barcode: string | null;
 }

@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsOptional } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
+import { IceCreamType } from '../dto/create-ice-cream.dto';
 
 export type IceCreamDocument = HydratedDocument<IceCream>;
 
@@ -26,12 +27,11 @@ export class IceCream {
     @Prop()
     vegan: boolean; 
     @Prop()
-    type: string; 
+    type: IceCreamType;
     @Prop()
-    tags: Array<string>;
+    tags: Array<any>;
     @Prop()
-    @IsOptional()
-    barcode: string;
+    barcode: string | null;
 }
 
 export const IceCreamSchema = SchemaFactory.createForClass(IceCream);
