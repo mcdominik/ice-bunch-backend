@@ -1,29 +1,29 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
+import { RemoveReviewDto } from './dto/remove-review.dto';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Put()
-  createOrUpdateReview(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.createOrUpdateReview(createReviewDto)
+  createOrUpdateReview(@Body() dto: CreateReviewDto) {
+    return this.reviewsService.createOrUpdateReview(dto)
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(+id);
+  @Delete()
+  removeReview(@Body() dto: RemoveReviewDto) {
+    return this.reviewsService.removeReview(dto)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewsService.update(+id, updateReviewDto);
+  @Get(':reviewId')
+  findOne(@Param('id') reviewId: string) {
+    return this.reviewsService.findOne(reviewId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
+  @Get(':userId')
+  getUserAllReviews(@Param('userId') userId: string) {
+    return this.reviewsService.getUserAllReviews(userId)
   }
 }

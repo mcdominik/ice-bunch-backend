@@ -5,10 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IceCreamSchema, IceCream } from './entities/ice-cream.entity';
 
 @Module({
-  imports: [    MongooseModule.forFeature([
+  imports: [MongooseModule.forFeature([
     { name: IceCream.name, schema: IceCreamSchema },
   ])],
   controllers: [IceCreamsController],
-  providers: [IceCreamsService]
+  providers: [IceCreamsService],
+  exports: [IceCreamsService]
 })
 export class IceCreamsModule {}

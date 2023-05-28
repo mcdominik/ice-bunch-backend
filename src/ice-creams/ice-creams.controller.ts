@@ -13,17 +13,12 @@ export class IceCreamsController {
   }
 
   @Post()
-  findBySignificantProperties (@Body() dto: SearchQueryDto) {
-    return this.iceCreamsService.findBySignificantProperties(dto);
+  findAndSortWithPagination(@Body() dto: SearchQueryDto) {
+    return this.iceCreamsService.findAndSortWithPagination(dto)
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.iceCreamsService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.iceCreamsService.remove(+id);
-  // }
+  
+  @Get(':id')
+  getOneById(@Param('id') iceCreamId: string) {
+    return this.iceCreamsService.getOneById(iceCreamId);
+  }
 }

@@ -54,6 +54,12 @@ export class UsersService {
     });
   }
 
+  getOneById(userId: string) {
+    return this.userModel.findById(
+      userId
+    )
+  }
+
   async tryVerifyEmailByToken(token: string) {
     const user = await this.userModel.findOne({
       emailConfirmationToken: token,
