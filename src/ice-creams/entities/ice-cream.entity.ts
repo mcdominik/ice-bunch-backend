@@ -23,6 +23,8 @@ export class IceCream {
     @Prop()
     rating: number;
     @Prop()
+    number_of_ratings: number;
+    @Prop()
     image: string;
     @Prop()
     vegan: boolean; 

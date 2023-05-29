@@ -26,6 +26,8 @@ export class CreateIceCreamDto {
     description_en: string;
     @IsNumber()
     rating: number;
+    @IsNumber()
+    number_of_ratings: number;
     @IsString()
     image: string;
     @IsBoolean()

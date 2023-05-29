@@ -23,9 +23,8 @@ export class ReviewsService {
   async createOrUpdateReview(dto: CreateReviewDto) {
     // they throw CastError if userid or icecreamid is wrong
     await this.usersService.getOneById(dto.userId)
-    await this.iceCreamService.getOneById(dto.iceCreamId)
+    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
 
- 
     const review = await this.reviewModel.findOne({
       userId: dto.userId,
       iceCreamId: dto.iceCreamId
@@ -36,11 +35,14 @@ export class ReviewsService {
     }
     review.rating = dto.rating,
     review.content = dto.content
+    iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.number_of_ratings+1)
+    iceCream.number_of_ratings = iceCream.number_of_ratings + 1
+    await iceCream.save()
     await review.save()
   }
 
-  getReviewById(id: string) {
-    return this.reviewModel.findById(id);
+  async getReviewById(id: string) {
+    return await this.reviewModel.findById(id);
   }
 
   async getUserAllReviews(userId: string) {
@@ -49,14 +51,14 @@ export class ReviewsService {
     })
   }
 
-  getIceCreamAllReviews(iceCreamId: string) {
-    return this.reviewModel.find({
+  async getIceCreamAllReviews(iceCreamId: string) {
+    return await this.reviewModel.find({
       iceCreamId
     })
   }
 
   async findOne(reviewId: string) {
-    return this.reviewModel.findOne({_id: reviewId});
+    return await this.reviewModel.findOne({_id: reviewId});
   }
 
   async removeReview(dto: RemoveReviewDto) {
