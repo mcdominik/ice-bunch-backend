@@ -31,12 +31,13 @@ export class ReviewsService {
     })
     if (!review) {
       const createdReview = new this.reviewModel(dto);
-      return createdReview.save();
+      iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.number_of_ratings+1)
+      iceCream.number_of_ratings = iceCream.number_of_ratings + 1
+      await iceCream.save()
+      return await createdReview.save();
     }
     review.rating = dto.rating,
     review.content = dto.content
-    iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.number_of_ratings+1)
-    iceCream.number_of_ratings = iceCream.number_of_ratings + 1
     await iceCream.save()
     await review.save()
   }
