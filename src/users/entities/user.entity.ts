@@ -18,6 +18,9 @@ export class User {
 
   @Prop()
   accountType: AccountType; 
+  
+  @Prop()
+  profilePictureUrl: string;
 
   @Prop()
   emailConfirmationToken?: string;

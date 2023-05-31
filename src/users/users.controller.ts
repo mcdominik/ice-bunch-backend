@@ -15,6 +15,11 @@ import { CreateUserDtoFromFrontend } from './dto/create-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get(':id')
+  getOneById(@Param('id') userId: string) {
+    return this.usersService.getOneById(userId);
+  }
+
   @Post()
   createVerifiedByOauthProvider(@Body() createUserDto: CreateUserDtoFromFrontend) {
     return this.usersService.createVerifiedByOauthProvider(createUserDto);
