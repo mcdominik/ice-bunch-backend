@@ -20,6 +20,11 @@ export class UsersController {
     return this.usersService.getOneById(userId);
   }
 
+  @Get('/email/:email')
+  getOneByEmail(@Param('email') email: string) {
+    return this.usersService.getOneByEmail(email);
+  }
+
   @Post()
   createVerifiedByOauthProvider(@Body() createUserDto: CreateUserDtoFromFrontend) {
     return this.usersService.createVerifiedByOauthProvider(createUserDto);

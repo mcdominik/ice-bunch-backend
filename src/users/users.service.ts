@@ -52,14 +52,14 @@ export class UsersService {
     return hashSync(password, 10);
   }
 
-  getOneByEmail(email: string) {
-    return this.userModel.findOne({
+  async getOneByEmail(email: string) {
+    return await this.userModel.findOne({
       email,
     });
   }
 
-  getOneById(userId: string) {
-    return this.userModel.findById(
+  async getOneById(userId: string) {
+    return await this.userModel.findById(
       userId
     )
   }
