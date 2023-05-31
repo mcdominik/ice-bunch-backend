@@ -11,6 +11,9 @@ export class User {
   email: string;
 
   @Prop()
+  username: string;
+  
+  @Prop()
   passwordHash: string;
 
   @Prop()
