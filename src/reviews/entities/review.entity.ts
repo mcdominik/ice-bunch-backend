@@ -8,6 +8,8 @@ export class Review {
   _id: string;
   @Prop() 
   userId: string;
+  @Prop() 
+  username: string;
   @Prop()
   iceCreamId: string;
   @Prop()

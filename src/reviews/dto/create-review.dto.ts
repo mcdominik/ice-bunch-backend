@@ -5,6 +5,9 @@ export class CreateReviewDto {
     userId: string;
 
     @IsString()
+    username: string;
+
+    @IsString()
     iceCreamId: string;
 
     @IsNumber()
