@@ -15,29 +15,33 @@ import { OurHttpException } from 'src/common/errors/OurHttpException';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  createVerifiedByOauthProvider(createUserDto: CreateUserDtoFromFrontend) {
+  createVerifiedByOauthProvider(dto: CreateUserDtoFromFrontend) {
+    const email_splitted = dto.email.split("@")
     const dtoWithHash: CreateUserDto = {
-      email: createUserDto.email,
-      passwordHash: this.hashPassword(createUserDto.password),
+      email: dto.email,
+      passwordHash: this.hashPassword(dto.password),
       emailConfirmed: true,
-      accountType: createUserDto.accountType,
+      accountType: dto.accountType,
+      username: email_splitted[0]
     };
 
     const createdUser = new this.userModel(dtoWithHash);
     return createdUser.save();
   }
 
-  async createUnverified(createUserDto: CreateUserDtoFromFrontend) {
+  async createUnverified(dto: CreateUserDtoFromFrontend) {
     const token = uuidv4();
-
+    const email_splitted = dto.email.split("@")
     const dtoWithHash: CreateUserDto = {
-      email: createUserDto.email,
-      passwordHash: this.hashPassword(createUserDto.password),
+      email: dto.email,
+      passwordHash: this.hashPassword(dto.password),
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
+      username: email_splitted[0]
+      
     };
-    if (await this.getOneByEmail(createUserDto.email)) {
+    if (await this.getOneByEmail(dto.email)) {
       throw new OurHttpException(OurExceptionType.USER_ALREADY_EXISTS);
     }
     const createdUser = new this.userModel(dtoWithHash);
