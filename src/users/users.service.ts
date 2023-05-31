@@ -16,13 +16,13 @@ export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   createVerifiedByOauthProvider(dto: CreateUserDtoFromFrontend) {
-    const email_splitted = dto.email.split("@")
+    const username = dto.email.split("@")[0]
     const dtoWithHash: CreateUserDto = {
       email: dto.email,
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: true,
       accountType: dto.accountType,
-      username: email_splitted[0]
+      username: username
     };
 
     const createdUser = new this.userModel(dtoWithHash);
@@ -31,14 +31,14 @@ export class UsersService {
 
   async createUnverified(dto: CreateUserDtoFromFrontend) {
     const token = uuidv4();
-    const email_splitted = dto.email.split("@")
+    const username = dto.email.split("@")[0]
     const dtoWithHash: CreateUserDto = {
       email: dto.email,
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
-      username: email_splitted[0]
+      username: username
       
     };
     if (await this.getOneByEmail(dto.email)) {
