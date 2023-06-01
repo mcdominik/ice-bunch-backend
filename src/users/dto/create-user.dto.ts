@@ -8,7 +8,6 @@ export class CreateUserDtoFromFrontend {
   @IsString()
   password: string;
 
-  @IsNotEmpty()
   accountType: AccountType;
 
 }
