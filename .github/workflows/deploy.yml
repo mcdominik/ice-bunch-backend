@@ -40,4 +40,4 @@ jobs:
             docker stop $(docker ps -q --filter ancestor=mcdominik/icebunch-backend )
             docker system prune -f
             docker pull mcdominik/icebunch-backend
-            docker run -d -e JWT_SECRET=${{secrets.JWT_SECRET}} -e MONGO_PASSWORD=${{secrets.MONGO_PASSWORD}} -e MONGO_HOST=${{secrets.MONGO_HOST}} -e EMAIL_HOST=${{secrets.EMAIL_HOST}} -e EMAIL_PORT=${{secrets.EMAIL_PORT}} -e EMAIL_USER=${{secrets.EMAIL_USER}} -e EMAIL_PASSWORD=${{secrets.EMAIL_PASSWORD}}  -p 4137:3002 mcdominik/icebunch-backend
+            docker run -d -e JWT_SECRET=${{secrets.JWT_SECRET}} -e FRONTEND_URL=${{secrets.FRONTEND_URL}} -e MONGO_PASSWORD=${{secrets.MONGO_PASSWORD}} -e MONGO_HOST=${{secrets.MONGO_HOST}} -e EMAIL_HOST=${{secrets.EMAIL_HOST}} -e EMAIL_PORT=${{secrets.EMAIL_PORT}} -e EMAIL_USER=${{secrets.EMAIL_USER}} -e EMAIL_PASSWORD=${{secrets.EMAIL_PASSWORD}}  -p 4137:3002 mcdominik/icebunch-backend
