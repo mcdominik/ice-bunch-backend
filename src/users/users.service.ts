@@ -22,7 +22,8 @@ export class UsersService {
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: true,
       accountType: dto.accountType,
-      username: username
+      username: username,
+      avatarUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Tony_Ferguson_2019.jpg"
     };
 
     const createdUser = new this.userModel(dtoWithHash);
@@ -38,7 +39,8 @@ export class UsersService {
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
-      username: username
+      username: username,
+      avatarUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Tony_Ferguson_2019.jpg"
       
     };
     if (await this.getOneByEmail(dto.email)) {

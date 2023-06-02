@@ -22,7 +22,7 @@ export class MailsService {
   async sendEmailConfirmation(email: string, token: string) {
     await this.mailerService.sendMail({
       to: email,
-      subject: 'Confirm your email',
+      subject: 'Email confirmation',
       text: `To confirm email: copy and paste this URL into your browser: ${process.env.FRONTEND_URL}/confirm/${token}`,
     });
   }

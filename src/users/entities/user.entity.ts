@@ -23,7 +23,7 @@ export class User {
   accountType: AccountType; 
   
   @Prop()
-  profilePictureUrl: string;
+  avatarUrl: string;
 
   @Prop()
   emailConfirmationToken?: string;
