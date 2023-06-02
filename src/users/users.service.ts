@@ -66,6 +66,14 @@ export class UsersService {
     )
   }
 
+  async changeAvatarUrl(userId: string, newAvatarUrl: string) {
+    const user = await this.userModel.findById(
+      userId
+    )
+    user.avatarUrl = newAvatarUrl
+    await user.save()
+  }
+
   async tryVerifyEmailByToken(token: string) {
     const user = await this.userModel.findOne({
       emailConfirmationToken: token,

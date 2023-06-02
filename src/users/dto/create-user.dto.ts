@@ -14,7 +14,7 @@ export class CreateUserDtoFromFrontend {
 
 export class CreateUserDto {
   email: string;
-  avatar: string;
+  avatarUrl: string;
   username: string;
   passwordHash: string;
   emailConfirmed: boolean;

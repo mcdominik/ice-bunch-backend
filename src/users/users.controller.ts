@@ -25,6 +25,11 @@ export class UsersController {
     return this.usersService.getOneByEmail(email);
   }
 
+  @Post('/new-avatar')
+  changeAvatarUrl(userId: string, newAvatarUrl: string) {
+    return this.usersService.changeAvatarUrl(userId, newAvatarUrl);
+  }
+
   @Post()
   createVerifiedByOauthProvider(@Body() createUserDto: CreateUserDtoFromFrontend) {
     return this.usersService.createVerifiedByOauthProvider(createUserDto);
