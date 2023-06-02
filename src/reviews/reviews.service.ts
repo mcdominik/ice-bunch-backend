@@ -39,7 +39,8 @@ export class ReviewsService {
     review.rating = dto.rating,
     review.content = dto.content
     await iceCream.save()
-    await review.save()
+    return await review.save()
+
   }
 
   async getReviewById(id: string) {
