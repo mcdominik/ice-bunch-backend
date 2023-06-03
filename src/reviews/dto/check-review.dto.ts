@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class RemoveReviewDto {
+export class CheckReviewDto {
     @IsString()
     userId: string;
 

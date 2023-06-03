@@ -9,6 +9,7 @@ import { OurHttpException } from 'src/common/errors/OurHttpException';
 import { RemoveReviewDto } from './dto/remove-review.dto';
 import { UsersService } from 'src/users/users.service';
 import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
+import { CheckReviewDto } from './dto/check-review.dto';
 
 
 @Injectable()
@@ -61,6 +62,15 @@ export class ReviewsService {
 
   async findOne(reviewId: string) {
     return await this.reviewModel.findOne({_id: reviewId});
+  }
+
+  async checkIfUserAlreadyReviewed(dto: CheckReviewDto) {
+    const review = await this.reviewModel.findOne({
+      userId: dto.userId,
+      iceCreamId: dto.iceCreamId
+    })
+    if (review) return true;
+    else return false;
   }
 
   async removeReview(dto: RemoveReviewDto) {
