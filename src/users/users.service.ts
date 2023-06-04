@@ -66,6 +66,12 @@ export class UsersService {
     )
   }
 
+  async getOneWithoutEmailById(userId: string) {
+    return await this.userModel.findById(
+      userId
+    ).select('-email')
+  }
+
   async changeAvatarUrl(userId: string, newAvatarUrl: string) {
     const user = await this.userModel.findById(
       userId

@@ -20,6 +20,11 @@ export class UsersController {
     return this.usersService.getOneById(userId);
   }
 
+  @Get('no-email/:id')
+  getOneWithoutEmailById(@Param('id') userId: string) {
+    return this.usersService.getOneWithoutEmailById(userId);
+  }
+
   @Get('/email/:email')
   getOneByEmail(@Param('email') email: string) {
     return this.usersService.getOneByEmail(email);
