@@ -14,8 +14,8 @@ export class ReviewsController {
   }
 
   @Delete()
-  removeReview(@Body() dto: RemoveReviewDto) {
-    return this.reviewsService.removeReview(dto)
+  removeReviewAndUpdateRanking(@Body() dto: RemoveReviewDto) {
+    return this.reviewsService.removeReviewAndUpdateRanking(dto)
   }
 
   @Get(':reviewId')
@@ -26,16 +26,6 @@ export class ReviewsController {
   @Get('user/:userId')
   getUserAllReviews(@Param('userId') userId: string) {
     return this.reviewsService.getUserAllReviews(userId)
-  }
-
-  // @Get('user/:userId/:iceCreamId')
-  // checkIfUserAlreadyReviewed(@Param('userId') userId: string, @Param('iceCreamId') iceCreamId: string) {
-  //   return this.reviewsService.checkIfUserAlreadyReviewed(userId, iceCreamId)
-  // }
-
-  @Post('user/is')
-  checkIfUserAlreadyReviewed(@Body() dto: CheckReviewDto) {
-    return this.reviewsService.checkIfUserAlreadyReviewed(dto)
   }
 
   @Get('ice-cream/:iceCreamId')
