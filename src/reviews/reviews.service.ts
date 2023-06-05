@@ -74,12 +74,11 @@ export class ReviewsService {
   }
 
   async removeReviewAndUpdateRanking(dto: RemoveReviewDto) {
-    const review = await this.reviewModel.findOne({
-      userId: dto.userId,
-      iceCreamId: dto.iceCreamId
+    const review = await this.reviewModel.findById({
+      reviewId: dto.reviewId
     })
-  
-    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
+    
+    const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
     iceCream.rating = (iceCream.rating - review.rating) / (iceCream.number_of_ratings - 1)
     iceCream.number_of_ratings = iceCream.number_of_ratings - 1
     await review.deleteOne()
