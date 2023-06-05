@@ -11,8 +11,8 @@ export class ReviewsController {
     return this.reviewsService.createOrUpdateReview(dto)
   }
 
-  @Delete()
-  removeReviewAndUpdateRanking(@Body() reviewId: string) {
+  @Delete(':reviewId')
+  removeReviewAndUpdateRanking(@Param('reviewId') reviewId: string) {
     return this.reviewsService.removeReviewAndUpdateRanking(reviewId)
   }
 
