@@ -77,6 +77,6 @@ export class ReviewsService {
     iceCream.rating = (iceCream.rating - review.rating) / (iceCream.number_of_ratings - 1)
     iceCream.number_of_ratings = iceCream.number_of_ratings - 1
     await iceCream.save()
-    await this.reviewModel.deleteOne()
+    await this.reviewModel.deleteMany({_id: id})
   }
 }
