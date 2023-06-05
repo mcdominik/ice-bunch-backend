@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Review, ReviewDocument } from './entities/review.entity';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
-import { RemoveReviewDto } from './dto/remove-review.dto';
 import { UsersService } from 'src/users/users.service';
 import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 import { CheckReviewDto } from './dto/check-review.dto';
@@ -73,11 +71,11 @@ export class ReviewsService {
     else return false;
   }
 
-  async removeReviewAndUpdateRanking(dto: RemoveReviewDto) {
+  async removeReviewAndUpdateRanking(reviewId: string) {
     const review = await this.reviewModel.findById({
-      reviewId: dto.reviewId
+      reviewId
     })
-    
+
     const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
     iceCream.rating = (iceCream.rating - review.rating) / (iceCream.number_of_ratings - 1)
     iceCream.number_of_ratings = iceCream.number_of_ratings - 1
