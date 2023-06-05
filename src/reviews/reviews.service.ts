@@ -71,8 +71,8 @@ export class ReviewsService {
     else return false;
   }
 
-  async removeReviewAndUpdateRanking(reviewId: string) {
-    const review = await this.reviewModel.findById(reviewId)
+  async removeReviewAndUpdateRanking(id: string) {
+    const review = await this.reviewModel.findById(id)
 
     const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
     iceCream.rating = (iceCream.rating - review.rating) / (iceCream.number_of_ratings - 1)
