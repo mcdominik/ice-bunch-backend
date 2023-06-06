@@ -23,7 +23,7 @@ export class IceCream {
     @Prop()
     rating: number;
     @Prop()
-    number_of_ratings: number;
+    numberOfRatings: number;
     @Prop()
     image: string;
     @Prop()

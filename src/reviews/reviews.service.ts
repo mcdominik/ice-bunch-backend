@@ -30,15 +30,15 @@ export class ReviewsService {
     })
     if (!review) {
       const createdReview = new this.reviewModel(dto);
-      iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.number_of_ratings+1)
-      iceCream.number_of_ratings = iceCream.number_of_ratings + 1
+      iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.numberOfRatings+1)
+      iceCream.numberOfRatings = iceCream.numberOfRatings + 1
       await iceCream.save()
       return await createdReview.save();
     }
     const offset = dto.rating - review.rating
     review.rating = dto.rating,
     review.content = dto.content
-    iceCream.rating = (iceCream.rating + offset) / (iceCream.number_of_ratings)
+    iceCream.rating = (iceCream.rating + offset) / (iceCream.numberOfRatings)
     await iceCream.save()
     return await review.save()
 
@@ -76,8 +76,8 @@ export class ReviewsService {
   async removeReviewAndUpdateRanking(id: string) {
     const review = await this.reviewModel.findById(id)
     const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
-    iceCream.rating = (iceCream.rating - review.rating) / (iceCream.number_of_ratings - 1)
-    iceCream.number_of_ratings = iceCream.number_of_ratings - 1
+    iceCream.rating = (iceCream.rating - review.rating) / (iceCream.numberOfRatings - 1)
+    iceCream.numberOfRatings = iceCream.numberOfRatings - 1
     await iceCream.save()
     await this.reviewModel.deleteOne({_id: id})
   }
