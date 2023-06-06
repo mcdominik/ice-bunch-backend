@@ -18,7 +18,7 @@ export class IceCreamsService {
 
   async findAndSortWithPagination(dto: SearchQueryDto) {
 
-    const ICES_ON_PAGE: number  = 24 
+    const ICES_ON_PAGE: number  = 10
 
     const field_regex = new RegExp(dto.searchField, "i")
     if (dto.sortKey != 1 && dto.sortKey != -1) {
