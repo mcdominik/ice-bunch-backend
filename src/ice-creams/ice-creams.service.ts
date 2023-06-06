@@ -18,7 +18,7 @@ export class IceCreamsService {
 
   async findAndSortWithPagination(dto: SearchQueryDto) {
 
-    const ICES_ON_PAGE: number  = 10
+    const ICES_ON_PAGE: number  = 5
 
     const field_regex = new RegExp(dto.searchField, "i")
     if (dto.sortKey != 1 && dto.sortKey != -1) {
@@ -39,7 +39,7 @@ export class IceCreamsService {
           ]},
           {vegan: dto.isVegan}
         ]
-      }).sort({rating: sortKey_}).limit(24).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort({rating: sortKey_}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       return iceCreams
     } else {
       const iceCreams = await this.iceCreamModel.find({
@@ -51,7 +51,7 @@ export class IceCreamsService {
             { name_en: { $regex: field_regex} }, 
             { description_en: { $regex: field_regex} },
           ]
-      }).sort({rating: sortKey_}).limit(24).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort({rating: sortKey_}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       return iceCreams
     }
 
