@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, IsDate } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
 
 export class CreateReviewDto {
     @IsString()
@@ -13,8 +13,8 @@ export class CreateReviewDto {
     @IsNumber()
     rating: number;
 
-    @IsDate()
-    lastUpdate: Date;
+    @IsDateString()
+    lastUpdate: string;
 
     @IsString()
     @IsOptional()
