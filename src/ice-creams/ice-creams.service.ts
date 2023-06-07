@@ -21,9 +21,12 @@ export class IceCreamsService {
     const ICES_ON_PAGE: number  = 5
 
     const field_regex = new RegExp(dto.searchField, "i")
+
     if (dto.sortKey != 1 && dto.sortKey != -1) {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
+
+    const total = await this.iceCreamModel.count()
 
     const sortKey_ = dto.sortKey
     if (dto.isVegan) {
@@ -52,7 +55,8 @@ export class IceCreamsService {
             { description_en: { $regex: field_regex} },
           ]
       }).sort({rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
-      return iceCreams
+      
+      return {iceCreams, total}
     }
 
   }
