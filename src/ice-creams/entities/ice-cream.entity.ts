@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsOptional } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 import { IceCreamType } from '../dto/create-ice-cream.dto';
 

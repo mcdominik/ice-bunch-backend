@@ -6,8 +6,11 @@ import { UsersModule } from './users/users.module';
 import { MailsModule } from './mails/mails.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { IceCreamsModule } from './ice-creams/ice-creams.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
-@Module({})
+@Module({
+  imports: [CloudinaryModule]
+})
 export class AppModule {
   static forRoot(options?: {
     mongoHost?: string;
@@ -24,6 +27,7 @@ export class AppModule {
           { dbName: 'icebunch' },
         ),
         AuthModule,
+        CloudinaryModule,
         UsersModule,
         MailsModule,
         IceCreamsModule,

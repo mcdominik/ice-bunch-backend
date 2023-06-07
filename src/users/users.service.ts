@@ -1,4 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { 
+  Injectable,
+  Post } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
 import { Model } from 'mongoose';
@@ -10,10 +12,14 @@ import { User, UserDocument, AccountType } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
+  private readonly cloudinaryService: CloudinaryService
+  )
+   {}
 
   createVerifiedByOauthProvider(dto: CreateUserDtoFromFrontend) {
     const username = dto.email.split("@")[0]
@@ -72,11 +78,10 @@ export class UsersService {
     ).select('-email')
   }
 
-  async changeAvatarUrl(userId: string, newAvatarUrl: string) {
-    const user = await this.userModel.findById(
-      userId
-    )
-    user.avatarUrl = newAvatarUrl
+  async changeAvatarUrl(file: Express.Multer.File, userId: string) {
+    const response = await this.cloudinaryService.uploadFile(file)
+    const user = await this.userModel.findById(userId)
+    user.avatarUrl = response.secure_url
     await user.save()
   }
 

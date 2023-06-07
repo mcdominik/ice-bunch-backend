@@ -7,9 +7,13 @@ import {
   UseGuards,
   Req,
   Delete,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDtoFromFrontend } from './dto/create-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 
 @Controller('users')
 export class UsersController {
@@ -30,9 +34,10 @@ export class UsersController {
     return this.usersService.getOneByEmail(email);
   }
 
-  @Post('/new-avatar')
-  changeAvatarUrl(userId: string, newAvatarUrl: string) {
-    return this.usersService.changeAvatarUrl(userId, newAvatarUrl);
+  @Post('image/upload/:userId')
+  @UseInterceptors(FileInterceptor('file'))
+  changeAvatarUrl(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string) {
+    return this.usersService.changeAvatarUrl(file, userId);
   }
 
   @Post()
