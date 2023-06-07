@@ -21,4 +21,8 @@ export class IceCreamsController {
   getOneById(@Param('id') iceCreamId: string) {
     return this.iceCreamsService.getOneById(iceCreamId);
   }
+  @Get()
+  getAllIceCreams() {
+    return this.iceCreamsService.getAllIceCreams()
+  }
 }

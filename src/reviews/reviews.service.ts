@@ -48,9 +48,15 @@ export class ReviewsService {
     return await this.reviewModel.findById(id);
   }
 
-  async getUserAllReviews(userId: string) {
+  async getUserAllReviewsByUserId(userId: string) {
     return await this.reviewModel.find({
       userId
+    })
+  }
+
+  async getUserAllReviewsByEmail(email: string) {
+    return await this.reviewModel.find({
+      email
     })
   }
 

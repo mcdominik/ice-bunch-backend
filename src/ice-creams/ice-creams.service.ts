@@ -26,39 +26,47 @@ export class IceCreamsService {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
-    const totalEntities: number = await this.iceCreamModel.count()
-    const totalPages: number = Math.ceil(totalEntities / ICES_ON_PAGE)
+    const totalEntitiesCount: number = await this.iceCreamModel.count()
 
+    const const_query = [
+      { brand_pl: { $regex: field_regex} }, 
+      { name_pl: { $regex: field_regex} }, 
+      { tags: { $regex: field_regex} },
+      { brand_en: { $regex: field_regex} }, 
+      { name_en: { $regex: field_regex} }, 
+    ]
 
     const sortKey_ = dto.sortKey
     if (dto.isVegan) {
+      const queryEntitiesCount: number = await this.iceCreamModel.find({
+        $and: [{
+          $or: const_query},
+          {vegan: dto.isVegan}
+        ]
+      }).count()
+
       const iceCreams = await this.iceCreamModel.find({
         $and: [{
-          $or: [
-            { brand_pl: { $regex: field_regex} }, 
-            { name_pl: { $regex: field_regex} }, 
-            { description_pl: { $regex: field_regex} },
-            { brand_en: { $regex: field_regex} }, 
-            { name_en: { $regex: field_regex} }, 
-            { description_en: { $regex: field_regex} },
-          ]},
+          $or: const_query},
           {vegan: dto.isVegan}
         ]
       }).sort({rating: sortKey_}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
-      return iceCreams
+      return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
+
     } else {
+
+      const queryEntitiesCount: number = await this.iceCreamModel.find({
+        $and: [{
+          $or: const_query},
+          {vegan: dto.isVegan}
+        ]
+      }).count()
+
       const iceCreams = await this.iceCreamModel.find({
-          $or: [
-            { brand_pl: { $regex: field_regex} }, 
-            { name_pl: { $regex: field_regex} }, 
-            { description_pl: { $regex: field_regex} },
-            { brand_en: { $regex: field_regex} }, 
-            { name_en: { $regex: field_regex} }, 
-            { description_en: { $regex: field_regex} },
-          ]
+          $or: const_query
       }).sort({rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
-      
-      return { iceCreams, 'meta': {totalEntities, totalPages} }
+
+      return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
     }
 
   }
@@ -66,4 +74,9 @@ export class IceCreamsService {
   async getOneById(iceCreamId: string) {
     return await this.iceCreamModel.findById(iceCreamId);
   }
+  
+  async getAllIceCreams() {
+    return await this.iceCreamModel.find()
+  }
+  
 }
