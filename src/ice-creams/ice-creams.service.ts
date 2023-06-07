@@ -26,8 +26,8 @@ export class IceCreamsService {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
-    const total_entities: number = await this.iceCreamModel.count()
-    const total_pages: number = Math.ceil(total_entities / ICES_ON_PAGE)
+    const totalEntities: number = await this.iceCreamModel.count()
+    const totalPages: number = Math.ceil(totalEntities / ICES_ON_PAGE)
 
 
     const sortKey_ = dto.sortKey
@@ -58,7 +58,7 @@ export class IceCreamsService {
           ]
       }).sort({rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       
-      return { iceCreams, 'meta': {total_entities, total_pages} }
+      return { iceCreams, 'meta': {totalEntities, totalPages} }
     }
 
   }
