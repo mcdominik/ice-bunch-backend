@@ -56,10 +56,7 @@ export class IceCreamsService {
     } else {
 
       const queryEntitiesCount: number = await this.iceCreamModel.find({
-        $and: [{
-          $or: const_query},
-          {vegan: dto.isVegan}
-        ]
+          $or: const_query
       }).count()
 
       const iceCreams = await this.iceCreamModel.find({
