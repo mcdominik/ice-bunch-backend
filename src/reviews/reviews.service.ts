@@ -54,12 +54,6 @@ export class ReviewsService {
     })
   }
 
-  async getUserAllReviewsByEmail(email: string) {
-    return await this.reviewModel.find({
-      email
-    })
-  }
-
   async getIceCreamAllReviews(iceCreamId: string) {
     return await this.reviewModel.find({
       iceCreamId
