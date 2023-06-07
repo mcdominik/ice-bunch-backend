@@ -51,7 +51,7 @@ export class IceCreamsService {
             { name_en: { $regex: field_regex} }, 
             { description_en: { $regex: field_regex} },
           ]
-      }).sort({rating: sortKey_}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort({rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       return iceCreams
     }
 
