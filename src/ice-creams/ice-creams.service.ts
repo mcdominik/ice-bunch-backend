@@ -18,7 +18,7 @@ export class IceCreamsService {
 
   async findAndSortWithPagination(dto: SearchQueryDto) {
 
-    const ICES_ON_PAGE: number  = 5
+    const ICES_ON_PAGE: number  = 20
 
     const field_regex = new RegExp(dto.searchField, "i")
 
@@ -26,7 +26,9 @@ export class IceCreamsService {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
-    const total = await this.iceCreamModel.count()
+    const total_entities: number = await this.iceCreamModel.count()
+    const total_pages: number = Math.ceil(total_entities / ICES_ON_PAGE)
+
 
     const sortKey_ = dto.sortKey
     if (dto.isVegan) {
@@ -56,7 +58,7 @@ export class IceCreamsService {
           ]
       }).sort({rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       
-      return {iceCreams, total}
+      return { iceCreams, 'meta': {total_entities, total_pages} }
     }
 
   }
