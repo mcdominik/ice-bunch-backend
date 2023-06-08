@@ -76,7 +76,7 @@ export class ReviewsService {
   async removeReviewAndUpdateRanking(id: string) {
     const review = await this.reviewModel.findById(id)
     const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
-    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) - review.rating) / iceCream.numberOfRatings - 1 
+    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) - review.rating) / (iceCream.numberOfRatings - 1)
     iceCream.numberOfRatings = iceCream.numberOfRatings - 1
     await iceCream.save()
     await this.reviewModel.deleteOne({_id: id})
