@@ -35,10 +35,10 @@ export class ReviewsService {
       await iceCream.save()
       return await createdReview.save();
     }
-    const offset = dto.rating - review.rating
+    const offset = dto.rating - review.rating / (iceCream.numberOfRatings)
     review.rating = dto.rating,
     review.content = dto.content
-    iceCream.rating = (iceCream.rating + offset) / (iceCream.numberOfRatings)
+    iceCream.rating = (iceCream.rating + offset) 
     await iceCream.save()
     return await review.save()
 
