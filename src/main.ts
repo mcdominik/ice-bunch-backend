@@ -10,8 +10,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
   app.enableCors({origin: [
-    'https://icebunch.com',
-    'https://icebunch-frontend.vercel.app'
+    'https://icebunch-frontend.vercel.app',
+    'https://icebunch.com'
   ]});
   app.useGlobalPipes(
     new ValidationPipe({
