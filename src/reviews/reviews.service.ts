@@ -28,7 +28,7 @@ export class ReviewsService {
       userId: dto.userId,
       iceCreamId: dto.iceCreamId
     })
-    const offset = dto.rating - review.rating / (iceCream.numberOfRatings)
+    const offset = (dto.rating - review.rating) / (iceCream.numberOfRatings)
     review.rating = dto.rating,
     review.content = dto.content
     iceCream.rating = (iceCream.rating + offset) 
