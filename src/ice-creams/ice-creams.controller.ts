@@ -7,10 +7,10 @@ import { SearchQueryDto } from './dto/search-query.dto';
 export class IceCreamsController {
   constructor(private readonly iceCreamsService: IceCreamsService) {}
 
-  @Post('add')
-  addNew(@Body() dto: CreateIceCreamDto) {
-    return this.iceCreamsService.addNew(dto);
-  }
+  // @Post('add')
+  // addNew(@Body() dto: CreateIceCreamDto) {
+  //   return this.iceCreamsService.addNew(dto);
+  // }
 
   @Post()
   findAndSortWithPagination(@Body() dto: SearchQueryDto) {
