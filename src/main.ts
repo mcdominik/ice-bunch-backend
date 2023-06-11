@@ -11,6 +11,7 @@ async function bootstrap() {
   app.enableCors({origin: [
     'https://icebunch-frontend.vercel.app',
     'https://icebunch.com',
+    'https://www.icebunch.com',
     'www.icebunch.com'
   ]});
   app.useGlobalPipes(
