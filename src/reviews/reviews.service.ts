@@ -8,7 +8,7 @@ import { OurHttpException } from 'src/common/errors/OurHttpException';
 import { UsersService } from 'src/users/users.service';
 import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 import { CheckReviewDto } from './dto/check-review.dto';
-
+import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -19,7 +19,7 @@ export class ReviewsService {
 
     ) {}
 
-  async createOrUpdateReview(dto: CreateReviewDto) {
+  async updateReview(dto: UpdateReviewDto) {
     // they throw CastError if userid or icecreamid is wrong
     await this.usersService.getOneById(dto.userId)
     const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
@@ -28,13 +28,6 @@ export class ReviewsService {
       userId: dto.userId,
       iceCreamId: dto.iceCreamId
     })
-    if (!review) {
-      const createdReview = new this.reviewModel(dto);
-      iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.numberOfRatings+1)
-      iceCream.numberOfRatings = iceCream.numberOfRatings + 1
-      await iceCream.save()
-      return await createdReview.save();
-    }
     const offset = dto.rating - review.rating / (iceCream.numberOfRatings)
     review.rating = dto.rating,
     review.content = dto.content
@@ -43,6 +36,28 @@ export class ReviewsService {
     return await review.save()
 
   }
+
+  async createReview(dto: CreateReviewDto) {
+
+    const review = await this.reviewModel.findOne({
+      userId: dto.userId,
+      iceCreamId: dto.iceCreamId
+    })
+
+    if (review) {
+      throw new OurHttpException(OurExceptionType.REVIEW_ALREADY_EXISTS); 
+    }
+
+    await this.usersService.getOneById(dto.userId)
+    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
+
+    const createdReview = new this.reviewModel(dto);
+    iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.numberOfRatings+1)
+    iceCream.numberOfRatings = iceCream.numberOfRatings + 1
+    await iceCream.save()
+    return await createdReview.save();
+  }
+
 
   async getReviewById(id: string) {
     return await this.reviewModel.findById(id);
