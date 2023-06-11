@@ -8,12 +8,7 @@ async function bootstrap() {
   const config = new DocumentBuilder().setTitle('icebunch').build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  app.enableCors({origin: [
-    'https://icebunch-frontend.vercel.app',
-    'https://icebunch.com',
-    'https://www.icebunch.com',
-    'www.icebunch.com'
-  ]});
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

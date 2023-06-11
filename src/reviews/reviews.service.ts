@@ -52,7 +52,7 @@ export class ReviewsService {
     const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
 
     const createdReview = new this.reviewModel(dto);
-    iceCream.rating = (iceCream.rating + dto.rating) / (iceCream.numberOfRatings+1)
+    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) + dto.rating) / (iceCream.numberOfRatings+1)
     iceCream.numberOfRatings = iceCream.numberOfRatings + 1
     await iceCream.save()
     return await createdReview.save();
