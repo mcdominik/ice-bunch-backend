@@ -1,6 +1,4 @@
-import { 
-  Injectable,
-  Post } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { hashSync } from 'bcryptjs';
 import { Model } from 'mongoose';
@@ -29,7 +27,7 @@ export class UsersService {
       emailConfirmed: true,
       accountType: dto.accountType,
       username: username,
-      avatarUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Tony_Ferguson_2019.jpg"
+      avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
     };
 
     const createdUser = new this.userModel(dtoWithHash);
@@ -46,7 +44,7 @@ export class UsersService {
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
       username: username,
-      avatarUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Tony_Ferguson_2019.jpg"
+      avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
       
     };
     if (await this.getOneByEmail(dto.email)) {
