@@ -7,10 +7,9 @@ import { MailsModule } from './mails/mails.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { IceCreamsModule } from './ice-creams/ice-creams.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { UserProfileModule } from './user-profile/user-profile.module';
 
-@Module({
-  imports: [CloudinaryModule]
-})
+@Module({})
 export class AppModule {
   static forRoot(options?: {
     mongoHost?: string;
@@ -30,6 +29,7 @@ export class AppModule {
         CloudinaryModule,
         UsersModule,
         MailsModule,
+        UserProfileModule,
         IceCreamsModule,
         ReviewsModule
       ],

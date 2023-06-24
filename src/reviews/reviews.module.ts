@@ -13,6 +13,7 @@ import { IceCreamsModule } from 'src/ice-creams/ice-creams.module';
     IceCreamsModule
   ],
   controllers: [ReviewsController],
-  providers: [ReviewsService]
+  providers: [ReviewsService],
+  exports: [ReviewsService]
 })
 export class ReviewsModule {}
