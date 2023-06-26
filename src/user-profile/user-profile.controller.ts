@@ -1,12 +1,10 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   UseGuards,
-  Req,
-  Delete,
+  Put,
   UseInterceptors,
   UploadedFile
 } from '@nestjs/common';
@@ -20,14 +18,14 @@ export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post('image/upload/:userId')
+  @Put('image/upload/:userId')
   @UseInterceptors(FileInterceptor('file'))
   changeAvatarUrl(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string) {
     return this.userProfileService.changeAvatarUrl(file, userId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('/new-username')
+  @Put('/new-username')
   changeUsername(@Body() dto: ChangeUsernameDto) { 
     return this.userProfileService.changeUsername(dto)
   }
