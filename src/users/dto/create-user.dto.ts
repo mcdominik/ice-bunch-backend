@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { AccountType } from '../entities/user.entity';
 
 export class CreateUserDtoFromFrontend {
@@ -7,6 +7,9 @@ export class CreateUserDtoFromFrontend {
 
   @IsString()
   password: string;
+
+  @IsOptional()
+  username: string;
 
   accountType: AccountType;
 

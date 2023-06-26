@@ -45,7 +45,7 @@ export class AuthService {
     let user = await this.usersService.getOneByEmail(email);
 
     if (!user) {
-      await this.usersService.createVerifiedByOauthProvider({ email, password: '', accountType: AccountType.GOOGLE });
+      await this.usersService.createVerifiedByOauthProvider({ email, password: '', accountType: AccountType.GOOGLE, username: '' });
       user = await this.usersService.getOneByEmail(email);
     }
 

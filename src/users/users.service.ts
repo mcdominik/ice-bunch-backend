@@ -36,14 +36,13 @@ export class UsersService {
 
   async createUnverified(dto: CreateUserDtoFromFrontend) {
     const token = uuidv4();
-    const username = dto.email.split("@")[0]
     const dtoWithHash: CreateUserDto = {
       email: dto.email,
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
-      username: username,
+      username: dto.username,
       avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
       
     };
