@@ -10,12 +10,12 @@ import { User, UserDocument, AccountType } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+// import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  private readonly cloudinaryService: CloudinaryService
+  // private readonly cloudinaryService: CloudinaryService
   )
    {}
 
@@ -36,14 +36,13 @@ export class UsersService {
 
   async createUnverified(dto: CreateUserDtoFromFrontend) {
     const token = uuidv4();
-    const username = dto.email.split("@")[0]
     const dtoWithHash: CreateUserDto = {
       email: dto.email,
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
-      username: username,
+      username: dto.username,
       avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
       
     };
@@ -70,18 +69,18 @@ export class UsersService {
     )
   }
 
-  async getOneWithoutEmailById(userId: string) {
-    return await this.userModel.findById(
-      userId
-    ).select('-email')
-  }
+  // async getOneWithoutEmailById(userId: string) {
+  //   return await this.userModel.findById(
+  //     userId
+  //   ).select('-email')
+  // }
 
-  async changeAvatarUrl(file: Express.Multer.File, userId: string) {
-    const response = await this.cloudinaryService.uploadFile(file)
-    const user = await this.userModel.findById(userId)
-    user.avatarUrl = response.secure_url
-    await user.save()
-  }
+  // async changeAvatarUrl(file: Express.Multer.File, userId: string) {
+  //   const response = await this.cloudinaryService.uploadFile(file)
+  //   const user = await this.userModel.findById(userId)
+  //   user.avatarUrl = response.secure_url
+  //   await user.save()
+  // }
 
   async tryVerifyEmailByToken(token: string) {
     const user = await this.userModel.findOne({
@@ -127,4 +126,5 @@ export class UsersService {
     await user.save();
     return user;
   }
+
 }

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, IsDateString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsDateString, MaxLength } from 'class-validator';
 
 export class CreateReviewDto {
     @IsString()
@@ -17,6 +17,7 @@ export class CreateReviewDto {
     lastUpdate: string;
 
     @IsString()
+    @MaxLength(900)
     @IsOptional()
     content: string;
 }
