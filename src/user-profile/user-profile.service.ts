@@ -45,6 +45,7 @@ export class UserProfileService {
     const user = await this.userModel.findById(dto.userId)
     user.username = dto.newUsername
     await user.save()
+    await this.updateUsernameInsideReviews(dto)
   }
   
   async updateUsernameInsideReviews(dto: ChangeUsernameDto) {
