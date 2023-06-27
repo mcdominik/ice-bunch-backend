@@ -17,6 +17,12 @@ export class UserProfileService {
   )
    {}
 
+  async isUsernameUnique(username: string) {
+    const user = await this.userModel.findOne({username: username})
+    return (user ? true : false)
+
+  }
+
   async changeAvatarUrl(file: Express.Multer.File, userId: string) {
     const response = await this.cloudinaryService.uploadFile(file)
     const user = await this.userModel.findById(userId)
@@ -25,7 +31,7 @@ export class UserProfileService {
   }
 
   async changeUsername(dto: ChangeUsernameDto) {
-    if (await this.userModel.findOne({username: dto.newUsername})) {
+    if (!await this.isUsernameUnique(dto.newUsername)) {
       throw new OurHttpException(OurExceptionType.USER_ALREADY_EXISTS); 
     }
     const user = await this.userModel.findById(dto.userId)
