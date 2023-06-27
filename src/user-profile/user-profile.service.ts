@@ -31,7 +31,7 @@ export class UserProfileService {
   }
 
   async changeUsername(dto: ChangeUsernameDto) {
-    if (!await this.isUsernameUnique(dto.newUsername)) {
+    if (await this.isUsernameUnique(dto.newUsername)) {
       throw new OurHttpException(OurExceptionType.USER_ALREADY_EXISTS); 
     }
     const user = await this.userModel.findById(dto.userId)
