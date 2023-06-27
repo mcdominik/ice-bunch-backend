@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { UserDocument, User } from './entities/user.entity';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import { ChangeUsernameDto } from './dto/change-username.dto';
+import { OurExceptionType } from 'src/common/errors/OurExceptionType';
+import { OurHttpException } from 'src/common/errors/OurHttpException';
 
 @Injectable()
 export class UserProfileService {
@@ -16,23 +17,13 @@ export class UserProfileService {
   )
    {}
 
-  // async getOneByEmail(email: string) {
-  //   return await this.userModel.findOne({
-  //     email,
-  //   });
-  // }
+  async isUsernameUnique(username: string) {
+    const user = await this.userModel.findOne(
+      {username: username}
+    )
+    return (user ? true : false)
 
-  // async getOneById(userId: string) {
-  //   return await this.userModel.findById(
-  //     userId
-  //   )
-  // }
-
-  // async getOneWithoutEmailById(userId: string) {
-  //   return await this.userModel.findById(
-  //     userId
-  //   ).select('-email')
-  // }
+  }
 
   async changeAvatarUrl(file: Express.Multer.File, userId: string) {
     const response = await this.cloudinaryService.uploadFile(file)
@@ -43,9 +34,12 @@ export class UserProfileService {
 
   async changeUsername(dto: ChangeUsernameDto) {
     const user = await this.userModel.findById(dto.userId)
-    user.username = dto.newUsername
-    await user.save()
-    await this.updateUsernameInsideReviews(dto)
+    if (!this.isUsernameUnique) {
+      throw new OurHttpException(OurExceptionType.USER_ALREADY_EXISTS); 
+    }
+      user.username = dto.newUsername
+      await user.save()
+      await this.updateUsernameInsideReviews(dto)
   }
   
   async updateUsernameInsideReviews(dto: ChangeUsernameDto) {
