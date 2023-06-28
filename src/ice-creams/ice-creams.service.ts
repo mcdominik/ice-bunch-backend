@@ -50,7 +50,7 @@ export class IceCreamsService {
           $or: const_query},
           {vegan: dto.isVegan}
         ]
-      }).sort({rating: sortKey_, numberOfRatings: -1, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort({numberOfRatings: -1, rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
 
     } else {
@@ -61,7 +61,7 @@ export class IceCreamsService {
 
       const iceCreams = await this.iceCreamModel.find({
           $or: const_query
-      }).sort({rating: sortKey_, numberOfRatings: -1, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort({numberOfRatings: -1 ,rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
 
       return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
     }
