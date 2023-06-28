@@ -22,7 +22,7 @@ export class IceCreamsService {
 
     const field_regex = new RegExp(dto.searchField, "i")
 
-    if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != 2) {
+    if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != -2) {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
@@ -44,11 +44,11 @@ export class IceCreamsService {
       case 1:
         sortKeys = {rating: 1, numberOfRatings: -1, _id: -1}
         break;
-      // case -2:
+      // case 2:
       //   sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
       //   break;
-      case 2:
-        sortKeys = {numberOfRatings: 1, rating: -1, _id: -1}
+      case -2:
+        sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
         break;
     }
 
