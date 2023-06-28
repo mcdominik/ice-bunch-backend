@@ -22,7 +22,7 @@ export class IceCreamsService {
 
     const field_regex = new RegExp(dto.searchField, "i")
 
-    if (dto.sortKey != 1 && dto.sortKey != -1) {
+    if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != 2) {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
@@ -36,7 +36,23 @@ export class IceCreamsService {
       { name_en: { $regex: field_regex} }, 
     ]
 
-    const sortKey_ = dto.sortKey
+    let sortKeys
+    switch (dto.sortKey) {
+      case -1:
+        sortKeys = {rating: -1, numberOfRatings: -1, _id: -1}
+        break;
+      case 1:
+        sortKeys = {rating: 1, numberOfRatings: -1, _id: -1}
+        break;
+      // case -2:
+      //   sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
+      //   break;
+      case 2:
+        sortKeys = {numberOfRatings: 1, rating: -1, _id: -1}
+        break;
+    }
+
+
     if (dto.isVegan) {
       const queryEntitiesCount: number = await this.iceCreamModel.find({
         $and: [{
@@ -50,7 +66,7 @@ export class IceCreamsService {
           $or: const_query},
           {vegan: dto.isVegan}
         ]
-      }).sort({numberOfRatings: -1, rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
       return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
 
     } else {
@@ -61,7 +77,7 @@ export class IceCreamsService {
 
       const iceCreams = await this.iceCreamModel.find({
           $or: const_query
-      }).sort({numberOfRatings: -1 ,rating: sortKey_, _id: -1}).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+      }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
 
       return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
     }
