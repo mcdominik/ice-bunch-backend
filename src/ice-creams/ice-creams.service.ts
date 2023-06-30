@@ -20,21 +20,27 @@ export class IceCreamsService {
 
     const ICES_ON_PAGE: number  = 20
 
-    const field_regex = new RegExp(dto.searchField, "i")
-
+    
+    // const keywords = dto.searchField.toLowerCase().split(' ');
+    const keywords = dto.searchField.split(' ').map((keyword) => new RegExp(keyword, "i"));
+    // const field_regex = new RegExp(dto.searchField, "i")
+    console.log(keywords)
     if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != -2) {
       throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
 
     const totalEntitiesCount: number = await this.iceCreamModel.count()
 
-    const const_query = [
-      { brand_pl: { $regex: field_regex} }, 
-      { name_pl: { $regex: field_regex} }, 
-      { tags: { $regex: field_regex} },
-      { brand_en: { $regex: field_regex} }, 
-      { name_en: { $regex: field_regex} }, 
-    ]
+    const const_query = 
+    {
+      $or: [
+      { brand_pl: { $in: keywords } }, 
+      { name_pl: { $in: keywords } }, 
+      { tags: { $in: keywords } },
+      { brand_en: { $in: keywords } }, 
+      { name_en: { $in: keywords } }, 
+      ]
+    }
 
     let sortKeys
     switch (dto.sortKey) {
@@ -56,14 +62,14 @@ export class IceCreamsService {
     if (dto.isVegan) {
       const queryEntitiesCount: number = await this.iceCreamModel.find({
         $and: [{
-          $or: const_query},
+          const_query},
           {vegan: dto.isVegan}
         ]
       }).count()
 
       const iceCreams = await this.iceCreamModel.find({
         $and: [{
-          $or: const_query},
+          const_query},
           {vegan: dto.isVegan}
         ]
       }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
@@ -72,11 +78,11 @@ export class IceCreamsService {
     } else {
 
       const queryEntitiesCount: number = await this.iceCreamModel.find({
-          $or: const_query
+          const_query
       }).count()
 
       const iceCreams = await this.iceCreamModel.find({
-          $or: const_query
+          const_query
       }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
 
       return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
