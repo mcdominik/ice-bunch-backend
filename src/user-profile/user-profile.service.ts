@@ -24,7 +24,7 @@ export class UserProfileService {
   }
 
   async changeAvatarUrl(file: Express.Multer.File, userId: string) {
-    const response = await this.cloudinaryService.uploadFile(file)
+    const response = await this.cloudinaryService.uploadFile(file, userId)
     const user = await this.userModel.findById(userId)
     user.avatarUrl = response.secure_url
     await user.save()
