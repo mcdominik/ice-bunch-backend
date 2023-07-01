@@ -9,93 +9,157 @@ import { OurHttpException } from 'src/common/errors/OurHttpException';
 
 @Injectable()
 export class IceCreamsService {
-  constructor(@InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>) {}
+  constructor(
+    @InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>,
+  ) {}
 
   async addNew(dto: CreateIceCreamDto) {
     const newIceCream = new this.iceCreamModel(dto);
     await newIceCream.save();
   }
 
-  async findAndSortWithPagination(dto: SearchQueryDto) {
+  // async findAndSortWithPagination(dto: SearchQueryDto) {
+  //   const ICES_ON_PAGE: number = 20;
 
-    const ICES_ON_PAGE: number  = 20
+  //   // const keywords = dto.searchField.toLowerCase().split(' ');
+  //   const keywords = dto.searchField
+  //     .split(' ')
+  //     .map((keyword) => new RegExp(keyword, 'i'));
+  //   // const field_regex = new RegExp(dto.searchField, "i")
+  //   console.log(keywords);
+  //   if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != -2) {
+  //     throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
+  //   }
 
-    
-    // const keywords = dto.searchField.toLowerCase().split(' ');
-    const keywords = dto.searchField.split(' ').map((keyword) => new RegExp(keyword, "i"));
-    // const field_regex = new RegExp(dto.searchField, "i")
-    console.log(keywords)
-    if (dto.sortKey != 1 && dto.sortKey != -1 && dto.sortKey != -2) {
-      throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
-    }
+  //   const totalEntitiesCount: number = await this.iceCreamModel.count();
 
-    const totalEntitiesCount: number = await this.iceCreamModel.count()
+  //   let sortKeys;
+  //   switch (dto.sortKey) {
+  //     case -1:
+  //       sortKeys = { rating: -1, numberOfRatings: -1, _id: -1 };
+  //       break;
+  //     case 1:
+  //       sortKeys = { rating: 1, numberOfRatings: -1, _id: -1 };
+  //       break;
+  //     // case 2:
+  //     //   sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
+  //     //   break;
+  //     case -2:
+  //       sortKeys = { numberOfRatings: -1, rating: -1, _id: -1 };
+  //       break;
+  //   }
 
-    const const_query = 
-    {
-      $or: [
-      { brand_pl: { $in: keywords } }, 
-      { name_pl: { $in: keywords } }, 
-      { tags: { $in: keywords } },
-      { brand_en: { $in: keywords } }, 
-      { name_en: { $in: keywords } }, 
-      ]
-    }
+  //   const result = await this.iceCreamModel.aggregate([
+  //     {
+  //       $match: {
+  //         $or: [
+  //           { name: { $regex: keywords, $options: 'i' } }, // Match name field
+  //           { brand: { $regex: keywords, $options: 'i' } }, // Match brand field
+  //           { tags: { $in: keywords, $options: 'i' } }, // Match any tags in the search words
+  //           { brand_en: { $in: keywords, $options: 'i' } }, // Match any tags in the search words
+  //           { name_en: { $in: keywords, $options: 'i' } }, // Match any tags in the search words
+  //         ],
+  //         $and : [{ vegan: dto.isVegan }]
+  //       },
+  //     },
+  //     { $sort: { numberOfRatings: -1 } },
+  //   ]);
+  //   if (result.length > 0) {
+  //     return result;
+  //   } else {
+  //     return null;
+  //   }
 
-    let sortKeys
-    switch (dto.sortKey) {
-      case -1:
-        sortKeys = {rating: -1, numberOfRatings: -1, _id: -1}
-        break;
-      case 1:
-        sortKeys = {rating: 1, numberOfRatings: -1, _id: -1}
-        break;
-      // case 2:
-      //   sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
-      //   break;
-      case -2:
-        sortKeys = {numberOfRatings: -1, rating: -1, _id: -1}
-        break;
-    }
+  //   const const_query = {
+  //     $or: [
+  //       { brand_pl: { $in: keywords } },
+  //       { name_pl: { $in: keywords } },
+  //       { tags: { $in: keywords } },
+  //       { brand_en: { $in: keywords } },
+  //       { name_en: { $in: keywords } },
+  //     ],
+  //   };
 
+  //   if (dto.isVegan) {
+  //     const queryEntitiesCount: number = await this.iceCreamModel
+  //       .find({
+  //         $and: [
+  //           {
+  //             const_query,
+  //           },
+  //           { vegan: dto.isVegan },
+  //         ],
+  //       })
+  //       .count();
 
-    if (dto.isVegan) {
-      const queryEntitiesCount: number = await this.iceCreamModel.find({
-        $and: [{
-          const_query},
-          {vegan: dto.isVegan}
-        ]
-      }).count()
+  //     const iceCreams = await this.iceCreamModel
+  //       .find({
+  //         $and: [
+  //           {
+  //             const_query,
+  //           },
+  //           { vegan: dto.isVegan },
+  //         ],
+  //       })
+  //       .sort(sortKeys)
+  //       .limit(ICES_ON_PAGE)
+  //       .skip((dto.page - 1) * ICES_ON_PAGE);
+  //     return { iceCreams, meta: { totalEntitiesCount, queryEntitiesCount } };
+  //   } else {
+  //     const queryEntitiesCount: number = await this.iceCreamModel
+  //       .find({
+  //         const_query,
+  //       })
+  //       .count();
 
-      const iceCreams = await this.iceCreamModel.find({
-        $and: [{
-          const_query},
-          {vegan: dto.isVegan}
-        ]
-      }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
-      return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
+  //     const iceCreams = await this.iceCreamModel
+  //       .find({
+  //         const_query,
+  //       })
+  //       .sort(sortKeys)
+  //       .limit(ICES_ON_PAGE)
+  //       .skip((dto.page - 1) * ICES_ON_PAGE);
 
-    } else {
+  //     return { iceCreams, meta: { totalEntitiesCount, queryEntitiesCount } };
+  //   }
+  // }
 
-      const queryEntitiesCount: number = await this.iceCreamModel.find({
-          const_query
-      }).count()
+  async searchIceCreams(
+    dto: SearchQueryDto,
+  ): Promise<{ iceCreams: IceCream[]; currentPage: number }> {
+    const searchWords = dto.searchField.trim().split(' ');
+    const itemsPerPage = 20;
+    const skipCount = (dto.page - 1) * itemsPerPage;
 
-      const iceCreams = await this.iceCreamModel.find({
-          const_query
-      }).sort(sortKeys).limit(ICES_ON_PAGE).skip((dto.page-1)*ICES_ON_PAGE)
+    const iceCreams = await this.iceCreamModel
+      .aggregate([
+        {
+          $match: {
+            $or: [
+              { name: { $regex: dto.searchField, $options: 'i' } },
+              { brand: { $regex: dto.searchField, $options: 'i' } },
+              { tags: { $in: searchWords } },
+              { brand_en: { $in: searchWords } },
+              { name_en: { $in: searchWords } },
+            ],
+            vegan: dto.isVegan,
+          },
+        },
+        { $sort: { rating: -1 } },
+        { $skip: skipCount },
+        { $limit: itemsPerPage },
+      ])
+      .exec();
+    const currentPage = dto.page;
 
-      return { iceCreams, 'meta': {totalEntitiesCount, queryEntitiesCount } }
-    }
-
+    return { iceCreams, currentPage };
   }
 
   async getOneById(iceCreamId: string) {
     return await this.iceCreamModel.findById(iceCreamId);
   }
-  
+
   async getAllIceCreams() {
-    return await this.iceCreamModel.find()
+    return await this.iceCreamModel.find();
   }
-  
 }

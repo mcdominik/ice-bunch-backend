@@ -13,8 +13,8 @@ export class IceCreamsController {
   // }
 
   @Post()
-  findAndSortWithPagination(@Body() dto: SearchQueryDto) {
-    return this.iceCreamsService.findAndSortWithPagination(dto)
+  searchIceCreams(@Body() dto: SearchQueryDto) {
+    return this.iceCreamsService.searchIceCreams(dto)
   }
   
   @Get(':id')
