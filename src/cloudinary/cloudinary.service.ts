@@ -5,26 +5,20 @@ const streamifier = require('streamifier');
 
 @Injectable()
 export class CloudinaryService {
-  uploadFile_old(file: Express.Multer.File): Promise<CloudinaryResponse> {
+  uploadFile(file: Express.Multer.File, userId: string): Promise<CloudinaryResponse> {
+  const options = {
+    folder: 'avatars',
+    public_id: userId,
+    overwrite: true
+  };
     return new Promise<CloudinaryResponse>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
+      const uploadStream = cloudinary.uploader.upload_stream(options,
         (error, result) => {
           if (error) return reject(error);
           resolve(result);
         },
       );
-
       streamifier.createReadStream(file.buffer).pipe(uploadStream);
     });
-  }
-
-  async uploadFile(file: Express.Multer.File, userId: string) {
-    const uploadResponse = await cloudinary.uploader.upload(file.path, {
-    folder: 'avatars',
-    public_id: userId, // Specify the public_id of the existing image
-    overwrite: true, // Set the `overwrite` option to true
-  });
-
-  return uploadResponse;
   }
 }

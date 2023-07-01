@@ -14,9 +14,7 @@ import { CloudinaryService } from './cloudinary.service';
   
     @Post('upload/:userId')
     @UseInterceptors(FileInterceptor('file'))
-    uploadImage(
-      @UploadedFile() file: Express.Multer.File,
-      @Param('userId') userId: string
+    uploadImage(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string
     ) {
       return this.cloudinaryService.uploadFile(file, userId);
     }
