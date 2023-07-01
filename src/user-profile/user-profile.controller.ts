@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Body,
   Param,
   UseGuards,
@@ -18,7 +19,7 @@ export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Put('image/upload/:userId')
+  @Post('image/upload/:userId')
   @UseInterceptors(FileInterceptor('file'))
   changeAvatarUrl(@UploadedFile() file: Express.Multer.File, @Param('userId') userId: string) {
     return this.userProfileService.changeAvatarUrl(file, userId);
