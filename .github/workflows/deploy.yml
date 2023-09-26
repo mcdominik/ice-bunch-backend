@@ -37,7 +37,7 @@ jobs:
           PORT: ${{ secrets.MIKRUS_PORT }}
           KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker stop $(docker ps -q --filter ancestor=mcdominik/icebunch-backend )
+            docker stop $(docker ps -q --filter ancestor=mcdominik/icebunch-backend ) || true
             docker system prune -f
             docker pull mcdominik/icebunch-backend
             docker run -d -e CLOUDINARY_API_KEY=${{secrets.CLOUDINARY_API_KEY}} -e CLOUDINARY_API_SECRET=${{secrets.CLOUDINARY_API_SECRET}} -e CLOUDINARY_NAME=${{secrets.CLOUDINARY_NAME}} -e JWT_SECRET=${{secrets.JWT_SECRET}} -e FRONTEND_URL=${{secrets.FRONTEND_URL}} -e MONGO_PASSWORD=${{secrets.MONGO_PASSWORD}} -e MONGO_HOST=${{secrets.MONGO_HOST}} -e EMAIL_HOST=${{secrets.EMAIL_HOST}} -e EMAIL_PORT=${{secrets.EMAIL_PORT}} -e EMAIL_USER=${{secrets.EMAIL_USER}} -e EMAIL_PASSWORD=${{secrets.EMAIL_PASSWORD}}  -p 4137:3002 mcdominik/icebunch-backend
