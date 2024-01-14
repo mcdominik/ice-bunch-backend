@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { hashSync } from 'bcryptjs';
+import { hashSync, compare } from 'bcryptjs';
 import { Model } from 'mongoose';
 import {
   CreateUserDto,
@@ -10,22 +10,22 @@ import { User, UserDocument, AccountType } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>,
-  )
-   {}
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   createVerifiedByOauthProvider(dto: CreateUserDtoFromFrontend) {
-    const username = dto.email.split("@")[0]
+    const username = dto.email.split('@')[0];
     const dtoWithHash: CreateUserDto = {
       email: dto.email,
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: true,
       accountType: dto.accountType,
       username: username,
-      avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
+      avatarUrl:
+        'https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png',
     };
 
     const createdUser = new this.userModel(dtoWithHash);
@@ -41,8 +41,8 @@ export class UsersService {
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
       username: dto.username,
-      avatarUrl: "https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png"
-      
+      avatarUrl:
+        'https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png',
     };
     if (await this.getOneByEmail(dto.email)) {
       throw new OurHttpException(OurExceptionType.USER_ALREADY_EXISTS);
@@ -62,9 +62,7 @@ export class UsersService {
   }
 
   async getOneById(userId: string) {
-    return await this.userModel.findById(
-      userId
-    )
+    return await this.userModel.findById(userId);
   }
 
   async tryVerifyEmailByToken(token: string) {
@@ -112,4 +110,21 @@ export class UsersService {
     return user;
   }
 
+  async deleteUser(userId: string) {
+    return await this.userModel.findByIdAndDelete(userId);
+  }
+
+  async tryChangePassword(dto: ChangePasswordDto, userId: string) {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new OurHttpException(OurExceptionType.USER_DOES_NOT_EXIST);
+    }
+
+    if (!(await compare(dto.oldPassword, user.passwordHash))) {
+      throw new OurHttpException(OurExceptionType.INVALID_CREDENTIALS);
+    }
+
+    user.passwordHash = this.hashPassword(dto.newPassword);
+    await user.save();
+  }
 }
