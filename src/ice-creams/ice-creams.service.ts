@@ -100,12 +100,17 @@ export class IceCreamsService {
 
   async updateIceCreamRatingAfterUpdatedReview(review: Review) {
     const iceCream = await this.getOneById(review.iceCreamId);
+    console.log(`revie inside:${review}`);
+
+    // const offset = (review.rating - review.rating) / iceCream.numberOfRatings;
+    // iceCream.rating = iceCream.rating + offset;
 
     iceCream.rating =
-      iceCream.rating +
-      (review.rating - iceCream.rating) / iceCream.numberOfRatings;
+      (iceCream.rating * iceCream.numberOfRatings +
+        (review.rating - review.rating)) /
+      iceCream.numberOfRatings;
 
-    await iceCream.save();
+    return await iceCream.save();
   }
 
   async updateIceCreamRatingAfterNewReview(review: Review) {
@@ -131,9 +136,5 @@ export class IceCreamsService {
 
   async getOneById(iceCreamId: string) {
     return await this.iceCreamModel.findById(iceCreamId);
-  }
-
-  async getAllIceCreams() {
-    return await this.iceCreamModel.find();
   }
 }

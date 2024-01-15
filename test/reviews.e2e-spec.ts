@@ -1,7 +1,6 @@
 import * as request from 'supertest';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { Types } from 'mongoose';
 import { Model } from 'mongoose';
 import { AppModule } from 'src/app.module';
 
@@ -105,6 +104,7 @@ describe('reviews', () => {
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
     const iceCream = await createIceCream();
+
     const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
@@ -185,30 +185,41 @@ describe('reviews', () => {
     const user = await usersService.getOneByEmail('test@test.pl');
     const iceCream = await createIceCream();
 
-    const review = await reviewModel.create({
+    const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
-      iceCreamId: iceCream.id,
-      rating: 5,
+      iceCreamId: iceCream._id,
+      rating: 4,
       lastUpdate: '2020-01-01',
-      content: 'test',
-    });
+      content: null,
+    };
 
+    const preResponse = await request(app.getHttpServer())
+      .post('/reviews')
+      .set('Authorization', `Bearer ${token}`)
+      .send(createReviewDto);
+
+    const review = preResponse.body;
+    console.log(review);
     const updateReviewDto: UpdateReviewDto = {
       content: 'test changed',
-      rating: 4,
+      rating: 1,
     };
     // when
     const response = await request(app.getHttpServer())
-      .put(`/reviews/${review.id}`)
+      .put(`/reviews/${review._id}`)
       .set('Authorization', `Bearer ${token}`)
       .send(updateReviewDto);
 
     // then
     expect(response.status).toBe(200);
 
-    const reviewAfterRequest = await reviewModel.findById(review.id);
+    const reviewAfterRequest = await reviewModel.findById(review._id);
+    const iceCreamAfterRequest = await iceCreamModel.findById(
+      review.iceCreamId,
+    );
     expect(reviewAfterRequest.content).toEqual(updateReviewDto.content);
+    expect(iceCreamAfterRequest.rating).toEqual(3.4);
   });
 
   it('should delete review', async () => {

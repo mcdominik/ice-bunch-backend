@@ -30,6 +30,7 @@ export class ReviewsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   createReviewAndUpdateRating(@Body() dto: CreateReviewDto) {
+    console.log('fired');
     return this.reviewsService.createReviewAndUpdateRating(dto);
   }
 

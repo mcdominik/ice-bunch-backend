@@ -19,15 +19,17 @@ export class ReviewsService {
 
   async updateReviewAndUpdateRating(dto: UpdateReviewDto, reviewId: string) {
     const review = await this.getReviewById(reviewId);
+    console.log(`revie out:${review}`);
+
     review.content = dto.content;
     review.lastUpdate = new Date();
     if (!dto.rating) {
       return await review.save();
     }
-
-    await this.iceCreamService.updateIceCreamRatingAfterUpdatedReview(review);
+    console.log(
+      await this.iceCreamService.updateIceCreamRatingAfterUpdatedReview(review),
+    );
     review.rating = dto.rating;
-
     return await review.save();
   }
 
@@ -42,7 +44,9 @@ export class ReviewsService {
 
     const createdReview = new this.reviewModel(dto);
 
-    await this.iceCreamService.updateIceCreamRatingAfterNewReview(review);
+    await this.iceCreamService.updateIceCreamRatingAfterNewReview(
+      createdReview,
+    );
 
     return await createdReview.save();
   }
