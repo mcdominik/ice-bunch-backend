@@ -1,4 +1,13 @@
-import { Controller, Get, Body, Param, Delete, Put, UseGuards, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Body,
+  Param,
+  Delete,
+  Put,
+  UseGuards,
+  Post,
+} from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -11,20 +20,23 @@ export class ReviewsController {
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Put(':reviewId')
-  updateReview(@Param('reviewId') reviewId: string, @Body() dto: UpdateReviewDto) {
-    return this.reviewsService.updateReview(dto)
+  updateReviewAndUpdateRating(
+    @Param('reviewId') reviewId: string,
+    @Body() dto: UpdateReviewDto,
+  ) {
+    return this.reviewsService.updateReviewAndUpdateRating(dto, reviewId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createReview(@Body() dto: CreateReviewDto) {
-    return this.reviewsService.createReview(dto)
+  createReviewAndUpdateRating(@Body() dto: CreateReviewDto) {
+    return this.reviewsService.createReviewAndUpdateRating(dto);
   }
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Delete(':reviewId')
-  removeReviewAndUpdateRanking(@Param('reviewId') reviewId: string) {
-    return this.reviewsService.removeReviewAndUpdateRanking(reviewId)
+  removeReviewAndUpdateRating(@Param('reviewId') reviewId: string) {
+    return this.reviewsService.removeReviewAndUpdateRating(reviewId);
   }
 
   @Get(':reviewId')
@@ -34,11 +46,11 @@ export class ReviewsController {
 
   @Get('user/:userId')
   getUserAllReviewsByUserId(@Param('userId') userId: string) {
-    return this.reviewsService.getUserAllReviewsByUserId(userId)
+    return this.reviewsService.getUserAllReviewsByUserId(userId);
   }
 
   @Get('ice-cream/:iceCreamId')
   getIceCreamAllReviews(@Param('iceCreamId') iceCreamId: string) {
-    return this.reviewsService.getIceCreamAllReviews(iceCreamId)
+    return this.reviewsService.getIceCreamAllReviews(iceCreamId);
   }
 }

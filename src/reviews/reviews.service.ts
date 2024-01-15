@@ -14,50 +14,38 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 export class ReviewsService {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
-    private readonly usersService: UsersService,
     private readonly iceCreamService: IceCreamsService,
+  ) {}
 
-    ) {}
-
-  async updateReview(dto: UpdateReviewDto) {
-    // they throw CastError if userid or icecreamid is wrong
-    await this.usersService.getOneById(dto.userId)
-    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
-
-    const review = await this.reviewModel.findOne({
-      userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
-    const offset = (dto.rating - review.rating) / (iceCream.numberOfRatings)
-    review.rating = dto.rating,
-    review.content = dto.content
-    iceCream.rating = (iceCream.rating + offset) 
-    await iceCream.save()
-    return await review.save()
-
-  }
-
-  async createReview(dto: CreateReviewDto) {
-
-    const review = await this.reviewModel.findOne({
-      userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
-
-    if (review) {
-      throw new OurHttpException(OurExceptionType.REVIEW_ALREADY_EXISTS); 
+  async updateReviewAndUpdateRating(dto: UpdateReviewDto, reviewId: string) {
+    const review = await this.getReviewById(reviewId);
+    review.content = dto.content;
+    review.lastUpdate = new Date();
+    if (!dto.rating) {
+      return await review.save();
     }
 
-    await this.usersService.getOneById(dto.userId)
-    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
+    await this.iceCreamService.updateIceCreamRatingAfterUpdatedReview(review);
+    review.rating = dto.rating;
 
-    const createdReview = new this.reviewModel(dto);
-    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) + dto.rating) / (iceCream.numberOfRatings+1)
-    iceCream.numberOfRatings = iceCream.numberOfRatings + 1
-    await iceCream.save()
-    return await createdReview.save();
+    return await review.save();
   }
 
+  async createReviewAndUpdateRating(dto: CreateReviewDto) {
+    const review = await this.reviewModel.findOne({
+      userId: dto.userId,
+      iceCreamId: dto.iceCreamId,
+    });
+    if (review) {
+      throw new OurHttpException(OurExceptionType.REVIEW_ALREADY_EXISTS);
+    }
+
+    const createdReview = new this.reviewModel(dto);
+
+    await this.iceCreamService.updateIceCreamRatingAfterNewReview(review);
+
+    return await createdReview.save();
+  }
 
   async getReviewById(id: string) {
     return await this.reviewModel.findById(id);
@@ -65,35 +53,32 @@ export class ReviewsService {
 
   async getUserAllReviewsByUserId(userId: string) {
     return await this.reviewModel.find({
-      userId
-    })
+      userId,
+    });
   }
 
   async getIceCreamAllReviews(iceCreamId: string) {
     return await this.reviewModel.find({
-      iceCreamId
-    })
+      iceCreamId,
+    });
   }
 
   async findOne(reviewId: string) {
-    return await this.reviewModel.findOne({_id: reviewId});
+    return await this.reviewModel.findOne({ _id: reviewId });
   }
 
   async checkIfUserAlreadyReviewed(dto: CheckReviewDto) {
     const review = await this.reviewModel.findOne({
       userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
-    if (review) return true;
-    else return false;
+      iceCreamId: dto.iceCreamId,
+    });
+    return !review ? false : true;
   }
 
-  async removeReviewAndUpdateRanking(id: string) {
-    const review = await this.reviewModel.findById(id)
-    const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
-    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) - review.rating) / (iceCream.numberOfRatings - 1)
-    iceCream.numberOfRatings = iceCream.numberOfRatings - 1
-    await iceCream.save()
-    await this.reviewModel.deleteOne({_id: id})
+  async removeReviewAndUpdateRating(id: string) {
+    const review = await this.reviewModel.findById(id);
+
+    await this.iceCreamService.updateIceCreamRatingAfterDeletedReview(review);
+    await this.reviewModel.deleteOne({ _id: id });
   }
 }
