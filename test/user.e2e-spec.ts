@@ -64,7 +64,6 @@ describe('users', () => {
   it('should delete user', async () => {
     // given
     const email = 'test@test.pl';
-
     const token = await createAndLoginUser(email, 'test');
 
     // when

@@ -6,17 +6,22 @@ import { IceCreamDocument, IceCream } from './entities/ice-cream.entity';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
-import { Review } from 'src/reviews/entities/review.entity';
+import { ReviewsService } from 'src/reviews/reviews.service';
 
 @Injectable()
 export class IceCreamsService {
   constructor(
     @InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>,
+    private readonly reviewService: ReviewsService,
   ) {}
 
   async addNew(dto: CreateIceCreamDto) {
     const newIceCream = new this.iceCreamModel(dto);
     await newIceCream.save();
+  }
+
+  async getOneById(iceCreamId: string) {
+    return await this.iceCreamModel.findById(iceCreamId);
   }
 
   async findAndSortWithPagination(dto: SearchQueryDto) {
@@ -96,45 +101,5 @@ export class IceCreamsService {
 
       return { iceCreams, meta: { totalEntitiesCount, queryEntitiesCount } };
     }
-  }
-
-  async updateIceCreamRatingAfterUpdatedReview(review: Review) {
-    const iceCream = await this.getOneById(review.iceCreamId);
-    console.log(`revie inside:${review}`);
-
-    // const offset = (review.rating - review.rating) / iceCream.numberOfRatings;
-    // iceCream.rating = iceCream.rating + offset;
-
-    iceCream.rating =
-      (iceCream.rating * iceCream.numberOfRatings +
-        (review.rating - review.rating)) /
-      iceCream.numberOfRatings;
-
-    return await iceCream.save();
-  }
-
-  async updateIceCreamRatingAfterNewReview(review: Review) {
-    const iceCream = await this.getOneById(review.iceCreamId);
-
-    iceCream.rating =
-      (iceCream.rating * iceCream.numberOfRatings + review.rating) /
-      (iceCream.numberOfRatings + 1);
-    iceCream.numberOfRatings = iceCream.numberOfRatings + 1;
-
-    await iceCream.save();
-  }
-
-  async updateIceCreamRatingAfterDeletedReview(review: Review) {
-    const iceCream = await this.getOneById(review.iceCreamId);
-
-    iceCream.rating =
-      (iceCream.rating * iceCream.numberOfRatings - review.rating) /
-      (iceCream.numberOfRatings - 1);
-    iceCream.numberOfRatings = iceCream.numberOfRatings - 1;
-    await iceCream.save();
-  }
-
-  async getOneById(iceCreamId: string) {
-    return await this.iceCreamModel.findById(iceCreamId);
   }
 }

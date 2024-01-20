@@ -20,24 +20,23 @@ export class ReviewsController {
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Put(':reviewId')
-  updateReviewAndUpdateRating(
+  updateReview(
     @Param('reviewId') reviewId: string,
     @Body() dto: UpdateReviewDto,
   ) {
-    return this.reviewsService.updateReviewAndUpdateRating(dto, reviewId);
+    return this.reviewsService.updateReview(dto, reviewId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createReviewAndUpdateRating(@Body() dto: CreateReviewDto) {
-    console.log('fired');
-    return this.reviewsService.createReviewAndUpdateRating(dto);
+  createReview(@Body() dto: CreateReviewDto) {
+    return this.reviewsService.createReview(dto);
   }
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Delete(':reviewId')
-  removeReviewAndUpdateRating(@Param('reviewId') reviewId: string) {
-    return this.reviewsService.removeReviewAndUpdateRating(reviewId);
+  removeReview(@Param('reviewId') reviewId: string) {
+    return this.reviewsService.removeReview(reviewId);
   }
 
   @Get(':reviewId')
@@ -53,5 +52,10 @@ export class ReviewsController {
   @Get('ice-cream/:iceCreamId')
   getIceCreamAllReviews(@Param('iceCreamId') iceCreamId: string) {
     return this.reviewsService.getIceCreamAllReviews(iceCreamId);
+  }
+
+  @Get('ice-cream/ranking-status/:iceCreamId')
+  getIceCreamRankingStatus(@Param('iceCreamId') iceCreamId: string) {
+    return this.reviewsService.getIceCreamRankingStatus(iceCreamId);
   }
 }

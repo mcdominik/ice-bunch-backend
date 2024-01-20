@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { AppModule } from 'src/app.module';
 
 import { Review, ReviewDocument } from 'src/reviews/entities/review.entity';
@@ -23,6 +23,7 @@ import {
   IceCreamType,
 } from 'src/ice-creams/dto/create-ice-cream.dto';
 import { UpdateReviewDto } from 'src/reviews/dto/update-review.dto';
+import { RankingStatus } from 'src/reviews/types/RankingStatus';
 
 describe('reviews', () => {
   let app: INestApplication;
@@ -79,36 +80,34 @@ describe('reviews', () => {
 
     return response.body.token;
   };
-
-  const createIceCream = async () => {
-    const dto: CreateIceCreamDto = {
-      brand_pl: 'brand_pl',
-      name_pl: 'name_pl',
-      description_pl: 'description_pl',
-      brand_en: 'brand_en',
-      name_en: 'name_en',
-      description_en: 'description_en',
-      rating: 4,
-      numberOfRatings: 4,
-      image: 'image',
-      vegan: true,
-      type: IceCreamType.PINT,
-      tags: ['tag1', 'tag2'],
-      barcode: 'barcode',
+  const createTestReview = async ({
+    userId = 'test',
+    username = 'test',
+    iceCreamId = 'test',
+    rating = 5,
+    lastUpdate = '2020-01-01',
+    content = 'test',
+  }): Promise<Review> => {
+    const dto: CreateReviewDto = {
+      userId: userId,
+      username: username,
+      iceCreamId: iceCreamId,
+      rating: rating,
+      lastUpdate: lastUpdate,
+      content: content,
     };
-    return await iceCreamModel.create(dto);
+    const review = await reviewModel.create(dto);
+    return review;
   };
 
   it('should create new review with content', async () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
-
     const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
-      iceCreamId: iceCream.id,
+      iceCreamId: 'test',
       rating: 5,
       lastUpdate: '2020-01-01',
       content: 'test',
@@ -119,36 +118,29 @@ describe('reviews', () => {
       .post('/reviews')
       .set('Authorization', `Bearer ${token}`)
       .send(createReviewDto);
-    console.log(response.body);
     // then
     expect(response.status).toBe(201);
 
-    expect(response.body).toContain({
-      // __v: expect.any(Number),
-      // _id: expect.any(Types.ObjectId),
-      userId: user._id,
-      username: 'test',
-      iceCreamId: iceCream._id,
-      rating: 5,
-      lastUpdate: '2020-01-01T00:00:00.000Z',
-      content: 'test',
-    });
-
-    const id = response.body._id;
-    const link = await reviewModel.findById(id);
-
-    expect(link).toBeDefined();
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        userId: user.id,
+        username: 'test',
+        rating: 5,
+        iceCreamId: 'test',
+        content: 'test',
+        lastUpdate: '2020-01-01T00:00:00.000Z',
+      }),
+    );
   });
 
   it('should create new review without content', async () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
     const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
-      iceCreamId: iceCream.id,
+      iceCreamId: 'test',
       rating: 5,
       lastUpdate: '2020-01-01',
       content: null,
@@ -162,16 +154,16 @@ describe('reviews', () => {
     // then
     expect(response.status).toBe(201);
 
-    expect(response.body).toContain({
-      // __v: expect.any(Number),
-      // _id: expect.any(Types.ObjectId),
-      userId: user._id,
-      username: 'test',
-      iceCreamId: iceCream._id,
-      rating: 5,
-      lastUpdate: '2020-01-01T00:00:00.000Z',
-      content: 'test',
-    });
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        username: 'test',
+        rating: 5,
+        iceCreamId: 'test',
+        userId: user.id,
+        content: null,
+        lastUpdate: '2020-01-01T00:00:00.000Z',
+      }),
+    );
 
     const id = response.body._id;
     const link = await reviewModel.findById(id);
@@ -183,28 +175,13 @@ describe('reviews', () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
+    const review = await createTestReview({ userId: user._id });
 
-    const createReviewDto: CreateReviewDto = {
-      userId: user.id,
-      username: 'test',
-      iceCreamId: iceCream._id,
-      rating: 4,
-      lastUpdate: '2020-01-01',
-      content: null,
-    };
-
-    const preResponse = await request(app.getHttpServer())
-      .post('/reviews')
-      .set('Authorization', `Bearer ${token}`)
-      .send(createReviewDto);
-
-    const review = preResponse.body;
-    console.log(review);
     const updateReviewDto: UpdateReviewDto = {
-      content: 'test changed',
+      content: 'content changed',
       rating: 1,
     };
+
     // when
     const response = await request(app.getHttpServer())
       .put(`/reviews/${review._id}`)
@@ -213,100 +190,50 @@ describe('reviews', () => {
 
     // then
     expect(response.status).toBe(200);
-
-    const reviewAfterRequest = await reviewModel.findById(review._id);
-    const iceCreamAfterRequest = await iceCreamModel.findById(
-      review.iceCreamId,
-    );
-    expect(reviewAfterRequest.content).toEqual(updateReviewDto.content);
-    expect(iceCreamAfterRequest.rating).toEqual(3.4);
+    expect(response.body.content).toEqual(updateReviewDto.content);
+    expect(response.body.rating).toEqual(updateReviewDto.rating);
   });
 
   it('should delete review', async () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
+    const review = await createTestReview({ userId: user._id });
 
-    const review = await reviewModel.create({
-      userId: user.id,
-      username: 'test',
-      iceCreamId: iceCream.id,
-      rating: 5,
-      lastUpdate: '2020-01-01',
-      content: 'test',
-    });
-    console.log(review.id);
     // when
     const response = await request(app.getHttpServer())
-      .delete(`/reviews/${review.id}`)
+      .delete(`/reviews/${review._id}`)
       .set('Authorization', `Bearer ${token}`);
 
     // then
     expect(response.status).toBe(200);
 
-    const isReview = await reviewModel.findById(review.id);
+    const isReview = await reviewModel.findById(review._id);
     expect(isReview).toBeFalsy();
   });
 
-  it('should update review content', async () => {
+  it('should get ice cream raking status', async () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
-
-    const review = await reviewModel.create({
-      userId: user.id,
-      username: 'test',
-      iceCreamId: iceCream.id,
-      rating: 5,
-      lastUpdate: '2020-01-01',
-      content: 'test',
+    await createTestReview({
+      userId: user._id,
+      rating: 4.333,
     });
-
-    const updateReviewDto: UpdateReviewDto = {
-      content: 'test changed',
-      rating: null,
-    };
+    await createTestReview({
+      userId: user._id,
+      rating: 3.162,
+    });
 
     // when
     const response = await request(app.getHttpServer())
-      .put(`/reviews/${review.id}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send(updateReviewDto);
-
-    // then
-    expect(response.status).toBe(200);
-
-    const reviewAfterRequest = await reviewModel.findById(review.id);
-    expect(reviewAfterRequest.content).toEqual(updateReviewDto.content);
-  });
-
-  it('should delete review', async () => {
-    // given
-    const token = await createAndLoginUser('test@test.pl', 'test');
-    const user = await usersService.getOneByEmail('test@test.pl');
-    const iceCream = await createIceCream();
-
-    const review = await reviewModel.create({
-      userId: user.id,
-      username: 'test',
-      iceCreamId: iceCream.id,
-      rating: 5,
-      lastUpdate: '2020-01-01',
-      content: 'test',
-    });
-    console.log(review.id);
-    // when
-    const response = await request(app.getHttpServer())
-      .delete(`/reviews/${review.id}`)
+      .get(`/reviews/ice-cream/ranking-status/test`)
       .set('Authorization', `Bearer ${token}`);
+    const rankingStatus: RankingStatus = response.body;
 
-    // then
     expect(response.status).toBe(200);
-
-    const isReview = await reviewModel.findById(review.id);
-    expect(isReview).toBeFalsy();
+    expect(rankingStatus.averageRating).toEqual(3.7475);
+    expect(rankingStatus.numberOfReviews).toEqual(2);
   });
 
   afterAll(async () => {
