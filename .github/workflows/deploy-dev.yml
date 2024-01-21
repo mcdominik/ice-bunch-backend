@@ -39,7 +39,6 @@ jobs:
           email-host: ${{ secrets.EMAIL_HOST }}
           email-password: ${{ secrets.EMAIL_PASSWORD }}
           email-user: ${{ secrets.EMAIL_USER }}
-          mongo-password: ${{ secrets.MONGO_PASSWORD_DEV }}
           jwt-secret: ${{ secrets.JWT_SECRET }}
           # env
           our-env: dev
@@ -48,6 +47,7 @@ jobs:
           frontend-url: ${{ secrets.FRONTEND_URL_DEV }}
           backend-url: ${{ secrets.BACKEND_URL_DEV }}
           mongo-host: ${{ secrets.MONGO_HOST_DEV }}
+          mongo-password: ${{ secrets.MONGO_PASSWORD_DEV }}
           cloudinary-api-key: ${{ secrets.CLOUDINARY_API_KEY }}
           cloudinary-api-secret: ${{ secrets.CLOUDINARY_API_SECRET }}
           cloudinary-name: ${{ secrets.CLOUDINARY_NAME }}
