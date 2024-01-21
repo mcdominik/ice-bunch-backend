@@ -13,30 +13,42 @@ import { CreateReviewDto } from './dto/create-review.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ReviewOwnerGuard } from './guards/review-owner.guard';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 
 @Controller('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(
+    private readonly reviewsService: ReviewsService,
+    private readonly iceCreamService: IceCreamsService,
+  ) {}
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Put(':reviewId')
-  updateReview(
+  async updateReviewAndRankingStatus(
     @Param('reviewId') reviewId: string,
     @Body() dto: UpdateReviewDto,
   ) {
-    return this.reviewsService.updateReview(dto, reviewId);
+    const review = await this.reviewsService.updateReview(dto, reviewId);
+    await this.reviewsService.updateIceCreamRankingStatus(review.iceCreamId);
+    return review;
   }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createReview(@Body() dto: CreateReviewDto) {
-    return this.reviewsService.createReview(dto);
+  async createReviewAndUpdateRankingStatus(@Body() dto: CreateReviewDto) {
+    const review = await this.reviewsService.createReview(dto);
+    await this.reviewsService.updateIceCreamRankingStatus(dto.iceCreamId);
+    return review;
   }
 
   @UseGuards(JwtAuthGuard, ReviewOwnerGuard)
   @Delete(':reviewId')
-  removeReview(@Param('reviewId') reviewId: string) {
-    return this.reviewsService.removeReview(reviewId);
+  async removeReviewAndUpdateRankingStatus(
+    @Param('reviewId') reviewId: string,
+  ) {
+    const review = await this.reviewsService.removeReview(reviewId);
+
+    await this.reviewsService.updateIceCreamRankingStatus(review.iceCreamId);
   }
 
   @Get(':reviewId')

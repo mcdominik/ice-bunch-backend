@@ -80,7 +80,7 @@ describe('reviews', () => {
 
     return response.body.token;
   };
-  const createTestReview = async ({
+  const createReview = async ({
     userId = 'test',
     username = 'test',
     iceCreamId = 'test',
@@ -100,14 +100,35 @@ describe('reviews', () => {
     return review;
   };
 
+  const createIceCream = async () => {
+    const dto: CreateIceCreamDto = {
+      brand_pl: 'brand_pl',
+      name_pl: 'name_pl',
+      description_pl: 'description_pl',
+      brand_en: 'brand_en',
+      name_en: 'name_en',
+      description_en: 'description_en',
+      rating: 4,
+      numberOfRatings: 4,
+      image: 'image',
+      vegan: true,
+      type: IceCreamType.PINT,
+      tags: ['tag1', 'tag2'],
+      barcode: 'barcode',
+    };
+    return await iceCreamModel.create(dto);
+  };
+
   it('should create new review with content', async () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
+    const iceCream = await createIceCream();
+
     const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
-      iceCreamId: 'test',
+      iceCreamId: iceCream.id,
       rating: 5,
       lastUpdate: '2020-01-01',
       content: 'test',
@@ -126,7 +147,7 @@ describe('reviews', () => {
         userId: user.id,
         username: 'test',
         rating: 5,
-        iceCreamId: 'test',
+        iceCreamId: iceCream.id,
         content: 'test',
         lastUpdate: '2020-01-01T00:00:00.000Z',
       }),
@@ -137,10 +158,12 @@ describe('reviews', () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
+    const iceCream = await createIceCream();
+
     const createReviewDto: CreateReviewDto = {
       userId: user.id,
       username: 'test',
-      iceCreamId: 'test',
+      iceCreamId: iceCream.id,
       rating: 5,
       lastUpdate: '2020-01-01',
       content: null,
@@ -158,7 +181,7 @@ describe('reviews', () => {
       expect.objectContaining({
         username: 'test',
         rating: 5,
-        iceCreamId: 'test',
+        iceCreamId: iceCream.id,
         userId: user.id,
         content: null,
         lastUpdate: '2020-01-01T00:00:00.000Z',
@@ -175,7 +198,11 @@ describe('reviews', () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const review = await createTestReview({ userId: user._id });
+    const iceCream = await createIceCream();
+    const review = await createReview({
+      userId: user._id,
+      iceCreamId: iceCream._id,
+    });
 
     const updateReviewDto: UpdateReviewDto = {
       content: 'content changed',
@@ -198,7 +225,11 @@ describe('reviews', () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    const review = await createTestReview({ userId: user._id });
+    const iceCream = await createIceCream();
+    const review = await createReview({
+      userId: user._id,
+      iceCreamId: iceCream._id,
+    });
 
     // when
     const response = await request(app.getHttpServer())
@@ -216,18 +247,22 @@ describe('reviews', () => {
     // given
     const token = await createAndLoginUser('test@test.pl', 'test');
     const user = await usersService.getOneByEmail('test@test.pl');
-    await createTestReview({
+    const iceCream = await createIceCream();
+
+    await createReview({
       userId: user._id,
       rating: 4.333,
+      iceCreamId: iceCream._id,
     });
-    await createTestReview({
+    await createReview({
       userId: user._id,
       rating: 3.162,
+      iceCreamId: iceCream._id,
     });
 
     // when
     const response = await request(app.getHttpServer())
-      .get(`/reviews/ice-cream/ranking-status/test`)
+      .get(`/reviews/ice-cream/ranking-status/${iceCream._id}`)
       .set('Authorization', `Bearer ${token}`);
     const rankingStatus: RankingStatus = response.body;
 

@@ -8,11 +8,13 @@ import { OurHttpException } from 'src/common/errors/OurHttpException';
 import { CheckReviewDto } from './dto/check-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { RankingStatus } from './types/RankingStatus';
+import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
+    private readonly iceCreamService: IceCreamsService,
   ) {}
 
   async updateReview(dto: UpdateReviewDto, reviewId: string) {
@@ -55,9 +57,10 @@ export class ReviewsService {
   }
 
   async getIceCreamAllReviews(iceCreamId: string) {
-    return await this.reviewModel.find({
+    const all = await this.reviewModel.find({
       iceCreamId,
     });
+    return all;
   }
 
   async findOne(reviewId: string) {
@@ -74,13 +77,14 @@ export class ReviewsService {
 
   async getIceCreamRankingStatus(iceCreamId: string): Promise<RankingStatus> {
     const reviews = await this.getIceCreamAllReviews(iceCreamId);
-    if (!reviews)
+    if (!reviews.length) {
       return {
         averageRating: 0,
         numberOfReviews: 0,
       };
-
-    let totalRating = reviews.reduce(
+    }
+    let totalRating = 0;
+    totalRating = reviews.reduce(
       (sum: number, review: Review) => sum + review.rating,
       0,
     );
@@ -96,5 +100,17 @@ export class ReviewsService {
       throw new OurHttpException(OurExceptionType.REVIEW_DOES_NOT_EXIST);
     }
     await this.reviewModel.deleteOne({ _id: id });
+    return review;
+  }
+
+  async updateIceCreamRankingStatus(iceCreamId: string) {
+    const iceCream = await this.iceCreamService.getOneById(iceCreamId);
+    if (!iceCream) {
+      throw new OurHttpException(OurExceptionType.ICE_CREAM_DOES_NOT_EXIST);
+    }
+    const rankingStatus = await this.getIceCreamRankingStatus(iceCreamId);
+    iceCream.numberOfRatings = rankingStatus.numberOfReviews;
+    iceCream.rating = rankingStatus.averageRating;
+    return await iceCream.save();
   }
 }
