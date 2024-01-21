@@ -39,7 +39,7 @@ jobs:
           email-host: ${{ secrets.EMAIL_HOST }}
           email-password: ${{ secrets.EMAIL_PASSWORD }}
           email-user: ${{ secrets.EMAIL_USER }}
-          mongo-password: ${{ secrets.MONGO_PASSWORD }}
+          mongo-password: ${{ secrets.MONGO_PASSWORD_DEV }}
           jwt-secret: ${{ secrets.JWT_SECRET }}
           # env
           our-env: dev
