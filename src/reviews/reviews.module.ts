@@ -10,10 +10,10 @@ import { IceCreamsModule } from 'src/ice-creams/ice-creams.module';
   imports: [
     MongooseModule.forFeature([{ name: Review.name, schema: ReviewSchema }]),
     UsersModule,
-    IceCreamsModule
+    IceCreamsModule,
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService],
-  exports: [ReviewsService]
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}

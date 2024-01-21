@@ -5,59 +5,46 @@ import { Model } from 'mongoose';
 import { Review, ReviewDocument } from './entities/review.entity';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
-import { UsersService } from 'src/users/users.service';
-import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 import { CheckReviewDto } from './dto/check-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { RankingStatus } from './types/RankingStatus';
+import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
-    private readonly usersService: UsersService,
     private readonly iceCreamService: IceCreamsService,
+  ) {}
 
-    ) {}
+  async updateReview(dto: UpdateReviewDto, reviewId: string) {
+    const review = await this.getReviewById(reviewId);
 
-  async updateReview(dto: UpdateReviewDto) {
-    // they throw CastError if userid or icecreamid is wrong
-    await this.usersService.getOneById(dto.userId)
-    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
+    review.content = dto.content;
+    review.lastUpdate = new Date();
 
-    const review = await this.reviewModel.findOne({
-      userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
-    const offset = (dto.rating - review.rating) / (iceCream.numberOfRatings)
-    review.rating = dto.rating,
-    review.content = dto.content
-    iceCream.rating = (iceCream.rating + offset) 
-    await iceCream.save()
-    return await review.save()
+    if (!dto.rating) {
+      return await review.save();
+    }
 
+    review.rating = dto.rating;
+    return await review.save();
   }
 
   async createReview(dto: CreateReviewDto) {
-
     const review = await this.reviewModel.findOne({
       userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
+      iceCreamId: dto.iceCreamId,
+    });
 
     if (review) {
-      throw new OurHttpException(OurExceptionType.REVIEW_ALREADY_EXISTS); 
+      throw new OurHttpException(OurExceptionType.REVIEW_ALREADY_EXISTS);
     }
 
-    await this.usersService.getOneById(dto.userId)
-    const iceCream = await this.iceCreamService.getOneById(dto.iceCreamId)
-
     const createdReview = new this.reviewModel(dto);
-    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) + dto.rating) / (iceCream.numberOfRatings+1)
-    iceCream.numberOfRatings = iceCream.numberOfRatings + 1
-    await iceCream.save()
+
     return await createdReview.save();
   }
-
 
   async getReviewById(id: string) {
     return await this.reviewModel.findById(id);
@@ -65,35 +52,65 @@ export class ReviewsService {
 
   async getUserAllReviewsByUserId(userId: string) {
     return await this.reviewModel.find({
-      userId
-    })
+      userId,
+    });
   }
 
   async getIceCreamAllReviews(iceCreamId: string) {
-    return await this.reviewModel.find({
-      iceCreamId
-    })
+    const all = await this.reviewModel.find({
+      iceCreamId,
+    });
+    return all;
   }
 
   async findOne(reviewId: string) {
-    return await this.reviewModel.findOne({_id: reviewId});
+    return await this.reviewModel.findOne({ _id: reviewId });
   }
 
   async checkIfUserAlreadyReviewed(dto: CheckReviewDto) {
     const review = await this.reviewModel.findOne({
       userId: dto.userId,
-      iceCreamId: dto.iceCreamId
-    })
-    if (review) return true;
-    else return false;
+      iceCreamId: dto.iceCreamId,
+    });
+    return !review ? false : true;
   }
 
-  async removeReviewAndUpdateRanking(id: string) {
-    const review = await this.reviewModel.findById(id)
-    const iceCream = await this.iceCreamService.getOneById(review.iceCreamId)
-    iceCream.rating = ((iceCream.rating * iceCream.numberOfRatings) - review.rating) / (iceCream.numberOfRatings - 1)
-    iceCream.numberOfRatings = iceCream.numberOfRatings - 1
-    await iceCream.save()
-    await this.reviewModel.deleteOne({_id: id})
+  async getIceCreamRankingStatus(iceCreamId: string): Promise<RankingStatus> {
+    const reviews = await this.getIceCreamAllReviews(iceCreamId);
+    if (!reviews.length) {
+      return {
+        averageRating: 0,
+        numberOfReviews: 0,
+      };
+    }
+    let totalRating = 0;
+    totalRating = reviews.reduce(
+      (sum: number, review: Review) => sum + review.rating,
+      0,
+    );
+    return {
+      averageRating: totalRating / reviews.length,
+      numberOfReviews: reviews.length,
+    };
+  }
+
+  async removeReview(id: string) {
+    const review = await this.reviewModel.findById(id);
+    if (!review) {
+      throw new OurHttpException(OurExceptionType.REVIEW_DOES_NOT_EXIST);
+    }
+    await this.reviewModel.deleteOne({ _id: id });
+    return review;
+  }
+
+  async updateIceCreamRankingStatus(iceCreamId: string) {
+    const iceCream = await this.iceCreamService.getOneById(iceCreamId);
+    if (!iceCream) {
+      throw new OurHttpException(OurExceptionType.ICE_CREAM_DOES_NOT_EXIST);
+    }
+    const rankingStatus = await this.getIceCreamRankingStatus(iceCreamId);
+    iceCream.numberOfRatings = rankingStatus.numberOfReviews;
+    iceCream.rating = rankingStatus.averageRating;
+    return await iceCream.save();
   }
 }

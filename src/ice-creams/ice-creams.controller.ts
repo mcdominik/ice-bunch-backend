@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { IceCreamsService } from './ice-creams.service';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
@@ -14,15 +22,11 @@ export class IceCreamsController {
 
   @Post()
   findAndSortWithPagination(@Body() dto: SearchQueryDto) {
-    return this.iceCreamsService.findAndSortWithPagination(dto)
+    return this.iceCreamsService.findAndSortWithPagination(dto);
   }
-  
+
   @Get(':id')
   getOneById(@Param('id') iceCreamId: string) {
     return this.iceCreamsService.getOneById(iceCreamId);
-  }
-  @Get()
-  getAllIceCreams() {
-    return this.iceCreamsService.getAllIceCreams()
   }
 }
