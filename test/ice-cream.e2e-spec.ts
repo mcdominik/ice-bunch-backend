@@ -24,6 +24,7 @@ import {
   IceCreamType,
 } from 'src/ice-creams/dto/create-ice-cream.dto';
 import { UpdateReviewDto } from 'src/reviews/dto/update-review.dto';
+import { SearchQueryDto, Sort } from 'src/ice-creams/dto/search-query.dto';
 
 describe('reviews', () => {
   let app: INestApplication;
@@ -81,28 +82,108 @@ describe('reviews', () => {
     return response.body.token;
   };
 
-  const createIceCream = async () => {
+  const createIceCream = async ({
+    brand_pl = 'brand_pl',
+    name_pl = 'name_pl',
+    description_pl = 'description_pl',
+    brand_en = 'brand_en',
+    name_en = 'name_en',
+    description_en = 'description_en',
+    rating = 4,
+    numberOfRatings = 4,
+    image = 'image',
+    vegan = true,
+    type = IceCreamType.PINT,
+    tags = ['tag1', 'tag2'],
+    barcode = 'barcode',
+  }) => {
     const dto: CreateIceCreamDto = {
-      brand_pl: 'brand_pl',
-      name_pl: 'name_pl',
-      description_pl: 'description_pl',
-      brand_en: 'brand_en',
-      name_en: 'name_en',
-      description_en: 'description_en',
-      rating: 4,
-      numberOfRatings: 4,
-      image: 'image',
-      vegan: true,
-      type: IceCreamType.PINT,
-      tags: ['tag1', 'tag2'],
-      barcode: 'barcode',
+      brand_pl: brand_pl,
+      name_pl: name_pl,
+      description_pl: description_pl,
+      brand_en: brand_en,
+      name_en: name_en,
+      description_en: description_en,
+      rating: rating,
+      numberOfRatings: numberOfRatings,
+      image: image,
+      vegan: vegan,
+      type: type,
+      tags: tags,
+      barcode: barcode,
     };
     return await iceCreamModel.create(dto);
   };
 
-  it('100', async () => {
+  it('should query only vegan ice creams', async () => {
     // given
-    expect(1).toBeDefined();
+    await createIceCream({ vegan: false });
+    await createIceCream({ vegan: false });
+    await createIceCream({ vegan: true });
+
+    const searchQueryDto: SearchQueryDto = {
+      searchField: 'brand_pl',
+      isVegan: true,
+      sortType: Sort.MOST_POPULAR,
+      page: 1,
+    };
+
+    // when
+    const response = await request(app.getHttpServer())
+      .post('/ice-creams')
+      .send(searchQueryDto);
+    // then
+    expect(response.status).toBe(201);
+    for (const iceCream of response.body.iceCreams) {
+      expect(iceCream.vegan).toBe(true);
+    }
+    expect(response.body.iceCreams.length).toEqual(1);
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('should query only searchField matching ice cream', async () => {
+    // given
+    await createIceCream({ name_en: 'Ben Jerry' });
+    await createIceCream({ name_en: 'different' });
+    await createIceCream({ name_en: 'different' });
+
+    const searchQueryDto: SearchQueryDto = {
+      searchField: 'Ben Jerry',
+      isVegan: undefined,
+      sortType: Sort.MOST_POPULAR,
+      page: 1,
+    };
+
+    // when
+    const response = await request(app.getHttpServer())
+      .post('/ice-creams')
+      .send(searchQueryDto);
+    // then
+    expect(response.body.iceCreams.length).toEqual(1);
+  });
+
+  it('should sort in desirable order', async () => {
+    // given
+    await createIceCream({ numberOfRatings: 2 });
+    await createIceCream({ name_en: 'most popular', numberOfRatings: 3 });
+    await createIceCream({ numberOfRatings: 1 });
+
+    const searchQueryDto: SearchQueryDto = {
+      searchField: '',
+      isVegan: undefined,
+      sortType: Sort.MOST_POPULAR,
+      page: 1,
+    };
+
+    // when
+    const response = await request(app.getHttpServer())
+      .post('/ice-creams')
+      .send(searchQueryDto);
+    // then
+    expect(response.body.iceCreams[0].name_en).toEqual('most popular');
   });
 
   afterAll(async () => {
