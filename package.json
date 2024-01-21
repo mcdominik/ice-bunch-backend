@@ -35,7 +35,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cloudinary": "^1.37.0",
-    "mongoose": "^7.2.0",
+    "mongoose": "^7.6.8",
     "nock": "^13.4.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -44,6 +44,7 @@
     "streamifier": "^0.1.1"
   },
   "devDependencies": {
+    "@babel/traverse": "^7.23.7",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
