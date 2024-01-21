@@ -44,7 +44,7 @@ jobs:
           # env
           our-env: prod
           image-name: mcdominik/ice-bunch-backend-prod
-          container-port: 5137
+          container-port: 4137
           frontend-url: ${{ secrets.FRONTEND_URL }}
           backend-url: ${{ secrets.BACKEND_URL }}
           mongo-host: ${{ secrets.MONGO_HOST }}
