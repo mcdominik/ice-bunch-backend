@@ -1,0 +1,17 @@
+name: Pull request workflow
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm install
+      - name: Run tests
+        run: JWT_SECRET=${{ secrets.JWT_SECRET }} MONGO_PASSWORD_TEST=${{ secrets.MONGO_PASSWORD_TEST }} MONGO_HOST_TEST=${{ secrets.MONGO_HOST_TEST }} npm run test:e2e -- --runInBand

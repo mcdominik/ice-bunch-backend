@@ -1,0 +1,77 @@
+name: Deploy
+
+inputs:
+  # SSH
+  host:
+    required: true
+  username:
+    required: true
+  port:
+    required: true
+  ssh-private-key:
+    required: true
+
+  # Docker
+  image-name:
+    required: true
+  container-port:
+    required: true
+  application-port:
+    required: true
+
+  # env
+  our-env:
+    required: true
+  email-port:
+    required: true
+  email-host:
+    required: true
+  email-password:
+    required: true
+  email-user:
+    required: true
+  frontend-url:
+    required: true
+  mongo-password:
+    required: true
+  jwt-secret:
+    required: true
+  backend-url:
+    required: true
+  mongo-host:
+    required: true
+  cloudinary-api-key:
+    required: true
+  cloudinary-api-secret:
+    required: true
+  cloudinary-name:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update image inside VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ inputs.host }}
+        USERNAME: ${{ inputs.username }}
+        PORT: ${{ inputs.port }}
+        KEY: ${{ inputs.ssh-private-key }}
+        script: |
+          docker run -d \
+          -p ${{ inputs.container-port }}:${{ inputs.application-port }} \
+          -e EMAIL_PORT=${{ inputs.email-port }} \
+          -e EMAIL_HOST=${{ inputs.email-host }} \
+          -e EMAIL_PASSWORD=${{ inputs.email-password }} \
+          -e EMAIL_USER=${{ inputs.email-user }} \
+          -e FRONTEND_URL=${{ inputs.frontend-url }} \
+          -e MONGO_PASSWORD=${{ inputs.mongo-password }} \
+          -e JWT_SECRET=${{ inputs.jwt-secret }} \
+          -e BACKEND_URL=${{ inputs.backend-url }} \
+          -e MONGO_HOST=${{ inputs.mongo-host }} \
+          -e OUR_ENV=${{ inputs.our-env }} \
+          -e CLOUDINARY_API_KEY=${{ inputs.cloudinary-api-key }} \
+          -e CLOUDINARY_API_SECRET=${{ inputs.cloudinary-api-secret }} \
+          -e CLOUDINARY_NAME=${{ inputs.cloudinary-name }} \
+          --restart=always \
+          ${{ inputs.image-name }}
