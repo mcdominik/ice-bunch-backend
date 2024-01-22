@@ -1,22 +1,19 @@
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsNotEmpty, IsString } from 'class-validator';
 
 export class SearchQueryDto {
   @IsString()
   searchField: string;
 
-  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
   isVegan: boolean;
 
   @IsNotEmpty()
   sortType: Sort;
 
-  @IsNumber()
+  @IsInt()
+  @Type(() => Number)
   page: number;
 }
 

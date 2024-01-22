@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -7,11 +7,14 @@ import { SearchQueryDto, Sort } from './dto/search-query.dto';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
 import { IceCreamQuery } from './types/ice-cream.query';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class IceCreamsService {
   private ICES_ON_PAGE = 20;
   constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>,
   ) {}
 
@@ -36,7 +39,6 @@ export class IceCreamsService {
         throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
     }
   }
-
   async findAndSortWithPagination(dto: SearchQueryDto): Promise<IceCreamQuery> {
     const totalEntitiesCount = await this.iceCreamModel.count();
     const queryEntitiesCount = await this.getCountMatchingSearchQuery(dto);

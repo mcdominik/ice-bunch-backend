@@ -10,13 +10,14 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
   app.enableCors();
   app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      exceptionFactory: (e) => {
-        throw new BadRequestException(e);
-      },
-    }),
+    new ValidationPipe(),
+    //   {
+    //   whitelist: true,
+    //   forbidNonWhitelisted: true,
+    //   exceptionFactory: (e) => {
+    //     throw new BadRequestException(e);
+    //   },
+    // }
   );
   await app.listen(3002);
 }
