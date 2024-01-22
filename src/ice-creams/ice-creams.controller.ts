@@ -16,7 +16,6 @@ export class IceCreamsController {
 
   @Get()
   findAndSortWithPagination(@Query() dto: SearchQueryDto) {
-    console.log(dto);
     return this.iceCreamsService.findAndSortWithPagination(dto);
   }
 

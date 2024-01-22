@@ -121,17 +121,16 @@ describe('reviews', () => {
     await createIceCream({ vegan: false });
     await createIceCream({ vegan: true });
 
-    const searchQueryDto: SearchQueryDto = {
-      searchField: 'brand_pl',
+    const dto: Partial<SearchQueryDto> = {
       isVegan: true,
       sortType: Sort.MOST_POPULAR,
       page: 1,
     };
 
     // when
-    const response = await request(app.getHttpServer())
-      .post('/ice-creams')
-      .send(searchQueryDto);
+    const response = await request(app.getHttpServer()).get(
+      `/ice-creams?isVegan=${dto.isVegan}&sortType=${dto.sortType}&page=${dto.page}`,
+    );
     // then
     expect(response.status).toBe(201);
     for (const iceCream of response.body.iceCreams) {
@@ -150,17 +149,16 @@ describe('reviews', () => {
     await createIceCream({ name_en: 'different' });
     await createIceCream({ name_en: 'different' });
 
-    const searchQueryDto: SearchQueryDto = {
+    const dto: Partial<SearchQueryDto> = {
       searchField: 'Ben Jerry',
-      isVegan: undefined,
       sortType: Sort.MOST_POPULAR,
       page: 1,
     };
 
     // when
-    const response = await request(app.getHttpServer())
-      .post('/ice-creams')
-      .send(searchQueryDto);
+    const response = await request(app.getHttpServer()).get(
+      `/ice-creams?searchField=${dto.searchField}&sortType=${dto.sortType}&page=${dto.page}`,
+    );
     // then
     expect(response.body.iceCreams.length).toEqual(1);
   });
@@ -171,17 +169,15 @@ describe('reviews', () => {
     await createIceCream({ name_en: 'most popular', numberOfRatings: 3 });
     await createIceCream({ numberOfRatings: 1 });
 
-    const searchQueryDto: SearchQueryDto = {
-      searchField: '',
-      isVegan: undefined,
+    const dto: Partial<SearchQueryDto> = {
       sortType: Sort.MOST_POPULAR,
       page: 1,
     };
 
     // when
-    const response = await request(app.getHttpServer())
-      .post('/ice-creams')
-      .send(searchQueryDto);
+    const response = await request(app.getHttpServer()).get(
+      `/ice-creams?sortType=${dto.sortType}&page=${dto.page}`,
+    );
     // then
     expect(response.body.iceCreams[0].name_en).toEqual('most popular');
   });
