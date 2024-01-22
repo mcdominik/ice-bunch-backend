@@ -1,16 +1,10 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseInterceptors, Query } from '@nestjs/common';
 import { IceCreamsService } from './ice-creams.service';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @Controller('ice-creams')
 export class IceCreamsController {
   constructor(private readonly iceCreamsService: IceCreamsService) {}
@@ -20,8 +14,8 @@ export class IceCreamsController {
   //   return this.iceCreamsService.addNew(dto);
   // }
 
-  @Post()
-  findAndSortWithPagination(@Body() dto: SearchQueryDto) {
+  @Get()
+  findAndSortWithPagination(@Query() dto: SearchQueryDto) {
     return this.iceCreamsService.findAndSortWithPagination(dto);
   }
 
