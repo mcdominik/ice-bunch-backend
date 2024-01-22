@@ -132,7 +132,7 @@ describe('reviews', () => {
       `/ice-creams?isVegan=${dto.isVegan}&sortType=${dto.sortType}&page=${dto.page}`,
     );
     // then
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     for (const iceCream of response.body.iceCreams) {
       expect(iceCream.vegan).toBe(true);
     }
@@ -160,6 +160,7 @@ describe('reviews', () => {
       `/ice-creams?searchField=${dto.searchField}&sortType=${dto.sortType}&page=${dto.page}`,
     );
     // then
+    expect(response.status).toBe(200);
     expect(response.body.iceCreams.length).toEqual(1);
   });
 
@@ -179,6 +180,7 @@ describe('reviews', () => {
       `/ice-creams?sortType=${dto.sortType}&page=${dto.page}`,
     );
     // then
+    expect(response.status).toBe(200);
     expect(response.body.iceCreams[0].name_en).toEqual('most popular');
   });
 
