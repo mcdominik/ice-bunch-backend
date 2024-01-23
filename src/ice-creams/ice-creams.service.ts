@@ -24,7 +24,11 @@ export class IceCreamsService {
   }
 
   async getOneById(iceCreamId: string) {
-    return await this.iceCreamModel.findById(iceCreamId);
+    const iceCream = this.iceCreamModel.findById(iceCreamId);
+    if (!iceCream) {
+      throw new OurHttpException(OurExceptionType.ICE_CREAM_DOES_NOT_EXIST);
+    }
+    return iceCream;
   }
 
   mapSortKeyToSortKeys(sortType: Sort) {
