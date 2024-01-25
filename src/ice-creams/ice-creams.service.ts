@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { IceCreamDocument, IceCream } from './entities/ice-cream.entity';
 import { SearchQueryDto, Sort } from './dto/search-query.dto';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
@@ -24,7 +24,12 @@ export class IceCreamsService {
   }
 
   async getOneById(iceCreamId: string) {
-    const iceCream = this.iceCreamModel.findById(iceCreamId);
+    if (!mongoose.isValidObjectId(iceCreamId)) {
+      throw new OurHttpException(OurExceptionType.INVALID_OBJECT_ID);
+    }
+
+    const iceCream = await this.iceCreamModel.findById(iceCreamId);
+
     if (!iceCream) {
       throw new OurHttpException(OurExceptionType.ICE_CREAM_DOES_NOT_EXIST);
     }
