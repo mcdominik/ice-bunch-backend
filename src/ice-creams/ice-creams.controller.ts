@@ -1,18 +1,30 @@
-import { Controller, Get, Param, UseInterceptors, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UseInterceptors,
+  Query,
+  Body,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { IceCreamsService } from './ice-creams.service';
 import { CreateIceCreamDto } from './dto/create-ice-cream.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { AdminGuard } from './guards/admin.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @UseInterceptors(CacheInterceptor)
 @Controller('ice-creams')
 export class IceCreamsController {
   constructor(private readonly iceCreamsService: IceCreamsService) {}
 
-  // @Post('add')
-  // addNew(@Body() dto: CreateIceCreamDto) {
-  //   return this.iceCreamsService.addNew(dto);
-  // }
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Post('add')
+  addNew(@Body() dto: CreateIceCreamDto) {
+    return this.iceCreamsService.addNew(dto);
+  }
 
   @Get()
   findAndSortWithPagination(@Query() dto: SearchQueryDto) {

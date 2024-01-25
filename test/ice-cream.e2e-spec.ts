@@ -10,6 +10,7 @@ import {
   UserDocument,
   User,
   AccountType,
+  Role,
 } from 'src/users/entities/user.entity';
 import {
   IceCream,
@@ -61,7 +62,11 @@ describe('reviews', () => {
     await iceCreamModel.deleteMany();
   });
 
-  const createAndLoginUser = async (email: string, password: string) => {
+  const createAndLoginUser = async (
+    email: string,
+    password: string,
+    role: Role = Role.USER,
+  ) => {
     await usersService.createUnverified({
       email,
       password,
@@ -80,6 +85,22 @@ describe('reviews', () => {
       });
 
     return response.body.token;
+  };
+
+  const createIceCreamDto: CreateIceCreamDto = {
+    brand_pl: 'brand_pl',
+    name_pl: 'name_pl',
+    description_pl: 'description_pl',
+    brand_en: 'brand_en',
+    name_en: 'name_en',
+    description_en: 'description_en',
+    rating: 5,
+    numberOfRatings: 0,
+    image: 'https://image',
+    vegan: false,
+    type: IceCreamType.BAR,
+    tags: [],
+    barcode: '123',
   };
 
   const createIceCream = async ({
@@ -139,10 +160,6 @@ describe('reviews', () => {
     expect(response.body.iceCreams.length).toEqual(1);
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
-
   it('should query only searchField matching ice cream', async () => {
     // given
     await createIceCream({ name_en: 'Ben Jerry' });
@@ -182,6 +199,35 @@ describe('reviews', () => {
     // then
     expect(response.status).toBe(200);
     expect(response.body.iceCreams[0].name_en).toEqual('most popular');
+  });
+
+  it('should add new ice cream by admin', async () => {
+    // given
+    const token = await createAndLoginUser('admin@test.pl', 'test');
+    const user = await usersService.getOneByEmail('admin@test.pl');
+    user.role = Role.ADMIN;
+    user.save();
+
+    // when
+    const response = await request(app.getHttpServer())
+      .post(`/ice-creams/add`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(createIceCreamDto);
+    // then
+    expect(response.status).toBe(201);
+  });
+
+  it('should block add new ice cream by plain user', async () => {
+    // given
+    const token = await createAndLoginUser('admin@test.pl', 'test');
+
+    // when
+    const response = await request(app.getHttpServer())
+      .post(`/ice-creams/add`)
+      .set('Authorization', `Bearer ${token}`)
+      .send(createIceCreamDto);
+    // then
+    expect(response.status).toBe(403);
   });
 
   afterAll(async () => {

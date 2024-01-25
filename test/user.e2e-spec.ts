@@ -4,6 +4,7 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import {
   AccountType,
+  Role,
   User,
   UserDocument,
 } from 'src/users/entities/user.entity';

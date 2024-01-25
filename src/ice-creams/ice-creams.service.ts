@@ -20,7 +20,7 @@ export class IceCreamsService {
 
   async addNew(dto: CreateIceCreamDto) {
     const newIceCream = new this.iceCreamModel(dto);
-    await newIceCream.save();
+    return await newIceCream.save();
   }
 
   async getOneById(iceCreamId: string) {

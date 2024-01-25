@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
 import { firstValueFrom } from 'rxjs';
-import { AccountType, User } from 'src/users/entities/user.entity';
+import { AccountType, Role, User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { GoogleResponse } from './models/GoogleModels';
 

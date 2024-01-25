@@ -12,16 +12,19 @@ export class User {
 
   @Prop()
   username: string;
-  
+
   @Prop()
   passwordHash: string;
+
+  @Prop()
+  role: Role;
 
   @Prop()
   emailConfirmed: boolean;
 
   @Prop()
-  accountType: AccountType; 
-  
+  accountType: AccountType;
+
   @Prop()
   avatarUrl: string;
 
@@ -30,7 +33,6 @@ export class User {
 
   @Prop()
   resetPasswordToken?: string;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -38,4 +40,9 @@ export const UserSchema = SchemaFactory.createForClass(User);
 export enum AccountType {
   EMAIL = 'EMAIL',
   GOOGLE = 'GOOGLE',
+}
+
+export enum Role {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }

@@ -9,6 +9,7 @@ import {
   UserDocument,
   User,
   AccountType,
+  Role,
 } from 'src/users/entities/user.entity';
 import {
   IceCream,
