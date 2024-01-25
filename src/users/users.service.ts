@@ -6,7 +6,7 @@ import {
   CreateUserDto,
   CreateUserDtoFromFrontend,
 } from './dto/create-user.dto';
-import { User, UserDocument, AccountType } from './entities/user.entity';
+import { User, UserDocument, AccountType, Role } from './entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
@@ -23,6 +23,7 @@ export class UsersService {
       passwordHash: this.hashPassword(dto.password),
       emailConfirmed: true,
       accountType: dto.accountType,
+      role: Role.USER,
       username: username,
       avatarUrl:
         'https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png',
@@ -40,6 +41,7 @@ export class UsersService {
       emailConfirmed: false,
       emailConfirmationToken: token,
       accountType: AccountType.EMAIL,
+      role: Role.USER,
       username: dto.username,
       avatarUrl:
         'https://res.cloudinary.com/dfqe0wizz/image/upload/v1686562358/default-avatar_sueepb.png',

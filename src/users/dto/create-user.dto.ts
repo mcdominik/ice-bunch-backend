@@ -1,5 +1,5 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { AccountType } from '../entities/user.entity';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { AccountType, Role } from '../entities/user.entity';
 
 export class CreateUserDtoFromFrontend {
   @IsEmail()
@@ -12,7 +12,6 @@ export class CreateUserDtoFromFrontend {
   username: string;
 
   accountType: AccountType;
-
 }
 
 export class CreateUserDto {
@@ -23,4 +22,5 @@ export class CreateUserDto {
   emailConfirmed: boolean;
   accountType: AccountType;
   emailConfirmationToken?: string;
+  role: Role;
 }
