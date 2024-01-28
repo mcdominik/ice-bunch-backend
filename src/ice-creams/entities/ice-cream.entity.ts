@@ -33,6 +33,8 @@ export class IceCream {
   tags: Array<string>;
   @Prop()
   barcode: string | null;
+  @Prop({ unique: true })
+  url: string;
 }
 
 export const IceCreamSchema = SchemaFactory.createForClass(IceCream);

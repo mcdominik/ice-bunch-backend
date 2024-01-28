@@ -35,4 +35,9 @@ export class IceCreamsController {
   getOneById(@Param('id') iceCreamId: string) {
     return this.iceCreamsService.getOneById(iceCreamId);
   }
+
+  @Get('url/:url')
+  getOneByUrl(@Param('url') url: string) {
+    return this.iceCreamsService.getOneByUrl(url);
+  }
 }

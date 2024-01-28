@@ -18,7 +18,6 @@ import {
 } from 'src/ice-creams/entities/ice-cream.entity';
 import { UsersService } from 'src/users/users.service';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { CreateReviewDto } from 'src/reviews/dto/create-review.dto';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import {
   CreateIceCreamDto,

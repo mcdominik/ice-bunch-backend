@@ -7,14 +7,11 @@ import { SearchQueryDto, Sort } from './dto/search-query.dto';
 import { OurExceptionType } from 'src/common/errors/OurExceptionType';
 import { OurHttpException } from 'src/common/errors/OurHttpException';
 import { IceCreamQuery } from './types/ice-cream.query';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 
 @Injectable()
 export class IceCreamsService {
   private ICES_ON_PAGE = 20;
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>,
   ) {}
 
@@ -36,6 +33,16 @@ export class IceCreamsService {
     return iceCream;
   }
 
+  async getOneByUrl(url: string) {
+    console.log(url);
+    const iceCream = await this.iceCreamModel.findOne({ url });
+
+    if (!iceCream) {
+      throw new OurHttpException(OurExceptionType.ICE_CREAM_DOES_NOT_EXIST);
+    }
+    return iceCream;
+  }
+
   mapSortKeyToSortKeys(sortType: Sort) {
     switch (sortType) {
       case Sort.DECREASING:
@@ -46,6 +53,23 @@ export class IceCreamsService {
         return { numberOfRatings: -1, rating: 1, _id: -1 };
       default:
         throw new OurHttpException(OurExceptionType.UNKNOW_SORTING_KEY);
+    }
+  }
+
+  validateIsVegan(isVegan: boolean | string) {
+    switch (isVegan) {
+      case true:
+      case 'true':
+        return true;
+      case false:
+      case 'false':
+        return false;
+      case undefined:
+      case null:
+      case '':
+        return undefined;
+      default:
+        throw new OurHttpException(OurExceptionType.IS_VEGAN_WRONG_FORMAT);
     }
   }
   async findAndSortWithPagination(dto: SearchQueryDto): Promise<IceCreamQuery> {
@@ -62,6 +86,7 @@ export class IceCreamsService {
   async getEntitiesMatchingSearchQuery(dto: SearchQueryDto) {
     const sortKeys: any = this.mapSortKeyToSortKeys(dto.sortType);
     const searchFieldFilter = this.getSearchFieldFilter(dto.searchField);
+    const veganQuery = this.validateIsVegan(dto.isVegan);
 
     const iceCreams = await this.iceCreamModel
       .find({
@@ -69,7 +94,7 @@ export class IceCreamsService {
           {
             $or: searchFieldFilter,
           },
-          dto.isVegan ? { vegan: dto.isVegan } : {},
+          veganQuery !== undefined ? { vegan: veganQuery } : {},
         ],
       })
       .sort(sortKeys)
@@ -80,13 +105,15 @@ export class IceCreamsService {
 
   async getCountMatchingSearchQuery(dto: SearchQueryDto) {
     const searchFieldFilter = this.getSearchFieldFilter(dto.searchField);
+    const veganQuery = this.validateIsVegan(dto.isVegan);
+
     const queryEntitiesCount: number = await this.iceCreamModel
       .find({
         $and: [
           {
             $or: searchFieldFilter,
           },
-          dto.isVegan ? { vegan: dto.isVegan } : {},
+          veganQuery !== undefined ? { vegan: veganQuery } : {},
         ],
       })
       .count();
