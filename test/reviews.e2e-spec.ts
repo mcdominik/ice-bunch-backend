@@ -25,6 +25,7 @@ import {
 } from 'src/ice-creams/dto/create-ice-cream.dto';
 import { UpdateReviewDto } from 'src/reviews/dto/update-review.dto';
 import { RankingStatus } from 'src/reviews/types/RankingStatus';
+import { randomUUID } from 'crypto';
 
 describe('reviews', () => {
   let app: INestApplication;
@@ -116,6 +117,7 @@ describe('reviews', () => {
       type: IceCreamType.PINT,
       tags: ['tag1', 'tag2'],
       barcode: 'barcode',
+      url: randomUUID(),
     };
     return await iceCreamModel.create(dto);
   };

@@ -25,6 +25,7 @@ import {
 } from 'src/ice-creams/dto/create-ice-cream.dto';
 import { UpdateReviewDto } from 'src/reviews/dto/update-review.dto';
 import { SearchQueryDto, Sort } from 'src/ice-creams/dto/search-query.dto';
+import { randomUUID } from 'crypto';
 
 describe('reviews', () => {
   let app: INestApplication;
@@ -100,6 +101,7 @@ describe('reviews', () => {
     type: IceCreamType.BAR,
     tags: [],
     barcode: '123',
+    url: '123',
   };
 
   const createIceCream = async ({
@@ -131,6 +133,7 @@ describe('reviews', () => {
       type: type,
       tags: tags,
       barcode: barcode,
+      url: randomUUID(),
     };
     return await iceCreamModel.create(dto);
   };
