@@ -1,6 +1,7 @@
-import { Type } from 'class-transformer';
+import { Transform, TransformFnParams, Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,10 +13,8 @@ export class SearchQueryDto {
   @IsOptional()
   searchField: string;
 
-  @IsBoolean()
   @IsOptional()
-  @Type(() => Boolean)
-  isVegan: boolean;
+  isVegan: boolean | string;
 
   @IsNotEmpty()
   sortType: Sort;

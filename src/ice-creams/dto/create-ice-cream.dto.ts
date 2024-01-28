@@ -44,4 +44,5 @@ export class CreateIceCreamDto {
   tags: Array<string>;
   @IsOptional()
   barcode: string | null;
+  url: string;
 }

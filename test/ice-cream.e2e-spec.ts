@@ -18,7 +18,6 @@ import {
 } from 'src/ice-creams/entities/ice-cream.entity';
 import { UsersService } from 'src/users/users.service';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import { CreateReviewDto } from 'src/reviews/dto/create-review.dto';
 import { ReviewsService } from 'src/reviews/reviews.service';
 import {
   CreateIceCreamDto,
@@ -26,6 +25,7 @@ import {
 } from 'src/ice-creams/dto/create-ice-cream.dto';
 import { UpdateReviewDto } from 'src/reviews/dto/update-review.dto';
 import { SearchQueryDto, Sort } from 'src/ice-creams/dto/search-query.dto';
+import { randomUUID } from 'crypto';
 
 describe('reviews', () => {
   let app: INestApplication;
@@ -101,6 +101,7 @@ describe('reviews', () => {
     type: IceCreamType.BAR,
     tags: [],
     barcode: '123',
+    url: '123',
   };
 
   const createIceCream = async ({
@@ -132,6 +133,7 @@ describe('reviews', () => {
       type: type,
       tags: tags,
       barcode: barcode,
+      url: randomUUID(),
     };
     return await iceCreamModel.create(dto);
   };
