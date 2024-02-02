@@ -65,6 +65,7 @@ export class IceCreamsService {
       case 'false':
         return false;
       case undefined:
+      case 'undefined':
       case null:
       case '':
         return undefined;
