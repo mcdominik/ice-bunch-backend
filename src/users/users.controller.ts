@@ -34,11 +34,17 @@ export class UsersController {
   createUnverified(@Body() createUserDto: CreateUserDtoFromFrontend) {
     return this.usersService.createUnverified(createUserDto);
   }
+
   @UseGuards(JwtAuthGuard)
   @Get('/me')
-  getOneById(@Req() req) {
+  getOneByIdFromToken(@Req() req) {
     const user = req.user;
     return this.usersService.getOneById(user.id);
+  }
+
+  @Get(':id')
+  getOneById(@Param('id') userId: string) {
+    return this.usersService.getOneById(userId);
   }
 
   @UseGuards(JwtAuthGuard)
