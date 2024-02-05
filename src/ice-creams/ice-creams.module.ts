@@ -4,6 +4,7 @@ import { IceCreamsController } from './ice-creams.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IceCreamSchema, IceCream } from './entities/ice-cream.entity';
 import { UsersModule } from 'src/users/users.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { UsersModule } from 'src/users/users.module';
       { name: IceCream.name, schema: IceCreamSchema },
     ]),
     UsersModule,
+    CacheModule.register(),
   ],
   controllers: [IceCreamsController],
   providers: [IceCreamsService],

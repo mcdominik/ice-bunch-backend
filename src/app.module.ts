@@ -9,8 +9,7 @@ import { IceCreamsModule } from './ice-creams/ice-creams.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+
 @Module({})
 export class AppModule {
   static forRoot(options?: {
@@ -27,11 +26,7 @@ export class AppModule {
           }@${options?.mongoHost ?? process.env.MONGO_HOST}/admin`,
           { dbName: 'icebunch' },
         ),
-        CacheModule.register({
-          ttl: 86400000,
-          max: 10,
-          isGlobal: true,
-        }),
+        CacheModule.register({}),
         AuthModule,
         CloudinaryModule,
         UsersModule,
@@ -39,12 +34,6 @@ export class AppModule {
         UserProfileModule,
         IceCreamsModule,
         ReviewsModule,
-      ],
-      providers: [
-        {
-          provide: APP_INTERCEPTOR,
-          useClass: CacheInterceptor,
-        },
       ],
     };
   }
