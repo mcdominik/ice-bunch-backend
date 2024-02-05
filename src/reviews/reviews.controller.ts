@@ -70,4 +70,8 @@ export class ReviewsController {
   getIceCreamRankingStatus(@Param('iceCreamId') iceCreamId: string) {
     return this.reviewsService.getIceCreamRankingStatus(iceCreamId);
   }
+  @Get('user/ice-creams/:userId')
+  getIceCreamsReviewedByUser(@Param('userId') userId: string) {
+    return this.reviewsService.getIceCreamsReviewedByUser(userId);
+  }
 }

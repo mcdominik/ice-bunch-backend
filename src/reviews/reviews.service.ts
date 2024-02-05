@@ -9,12 +9,17 @@ import { CheckReviewDto } from './dto/check-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { RankingStatus } from './types/RankingStatus';
 import { IceCreamsService } from 'src/ice-creams/ice-creams.service';
+import {
+  IceCream,
+  IceCreamDocument,
+} from 'src/ice-creams/entities/ice-cream.entity';
 
 @Injectable()
 export class ReviewsService {
   constructor(
     @InjectModel(Review.name) private reviewModel: Model<ReviewDocument>,
     private readonly iceCreamService: IceCreamsService,
+    @InjectModel(IceCream.name) private iceCreamModel: Model<IceCreamDocument>,
   ) {}
 
   async updateReview(dto: UpdateReviewDto, reviewId: string) {
@@ -92,6 +97,18 @@ export class ReviewsService {
       averageRating: totalRating / reviews.length,
       numberOfReviews: reviews.length,
     };
+  }
+
+  async getIceCreamsReviewedByUser(userId: string) {
+    const reviews = await this.reviewModel.find({
+      userId,
+    });
+    const iceCreamIds = reviews.map((review) => review.iceCreamId);
+    const promises = iceCreamIds.map(
+      async (iceCreamId: string) =>
+        await this.iceCreamModel.findById(iceCreamId),
+    );
+    return await Promise.all(promises);
   }
 
   async removeReview(id: string) {
