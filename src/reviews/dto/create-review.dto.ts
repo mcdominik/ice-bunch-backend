@@ -1,23 +1,29 @@
-import { IsNumber, IsOptional, IsString, IsDateString, MaxLength } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsDateString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateReviewDto {
-    @IsString()
-    userId: string;
+  @IsString()
+  userId: string;
 
-    @IsString()
-    username: string;
+  @IsString()
+  username: string;
 
-    @IsString()
-    iceCreamId: string;
+  @IsString()
+  iceCreamId: string;
 
-    @IsNumber()
-    rating: number;
+  @IsNumber()
+  rating: number;
 
-    @IsDateString()
-    lastUpdate: string;
+  @IsDateString()
+  lastUpdate: string;
 
-    @IsString()
-    @MaxLength(900)
-    @IsOptional()
-    content: string;
+  @IsString()
+  @MaxLength(900)
+  @IsOptional()
+  content: string;
 }

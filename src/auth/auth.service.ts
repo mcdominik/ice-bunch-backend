@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
 import { firstValueFrom } from 'rxjs';
-import { AccountType, User } from 'src/users/entities/user.entity';
+import { AccountType, Role, User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { GoogleResponse } from './models/GoogleModels';
 
@@ -30,6 +30,7 @@ export class AuthService {
 
     return {
       email: user.email,
+      accountType: AccountType.EMAIL,
       token: this.jwtService.sign(payload),
     };
   }
@@ -45,7 +46,12 @@ export class AuthService {
     let user = await this.usersService.getOneByEmail(email);
 
     if (!user) {
-      await this.usersService.createVerifiedByOauthProvider({ email, password: '', accountType: AccountType.GOOGLE, username: '' });
+      await this.usersService.createVerifiedByOauthProvider({
+        email,
+        password: '',
+        accountType: AccountType.GOOGLE,
+        username: '',
+      });
       user = await this.usersService.getOneByEmail(email);
     }
 
@@ -53,6 +59,7 @@ export class AuthService {
 
     return {
       email: email,
+      accountType: AccountType.GOOGLE,
       token: this.jwtService.sign(payload),
     };
   }

@@ -1,13 +1,31 @@
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform, TransformFnParams, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class SearchQueryDto {
-    @IsString()
-    searchField: string;
-    @IsOptional()
-    isVegan: boolean;
-    @IsNumber()
-    sortKey: number;
-    @IsNumber()
-    page: number;
+  @IsString()
+  @IsOptional()
+  searchField: string;
+
+  @IsOptional()
+  isVegan: boolean | string;
+
+  @IsNotEmpty()
+  sortType: Sort;
+
+  @IsInt()
+  @Type(() => Number)
+  page: number;
 }
 
+export enum Sort {
+  INCREASING = 'INCREASING',
+  DECREASING = 'DECREASING',
+  MOST_POPULAR = 'MOST_POPULAR',
+}

@@ -1,0 +1,31 @@
+name: Clean
+
+inputs:
+  # SSH
+  host:
+    required: true
+  username:
+    required: true
+  port:
+    required: true
+  ssh-private-key:
+    required: true
+
+  # Docker
+  image-name:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update image inside VPS
+      continue-on-error: true
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ inputs.host }}
+        USERNAME: ${{ inputs.username }}
+        PORT: ${{ inputs.port }}
+        KEY: ${{ inputs.ssh-private-key }}
+        script: |
+          docker stop $(docker ps -q --filter ancestor=${{ inputs.image-name }})
+          docker rmi $(docker images ${{ inputs.image-name }} -a -q) -f

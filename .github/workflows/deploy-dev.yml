@@ -1,0 +1,53 @@
+name: Deploy (dev)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'dev'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build and push
+        uses: './.github/templates/build-and-push'
+        with:
+          dockerhub-username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}
+          image-name: mcdominik/ice-bunch-backend-dev
+      - name: Clean
+        uses: './.github/templates/clean'
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          image-name: mcdominik/ice-bunch-backend-dev
+      - name: Deploy
+        uses: './.github/templates/deploy'
+        with:
+          # const
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          application-port: 3002
+          email-port: ${{ secrets.EMAIL_PORT }}
+          email-host: ${{ secrets.EMAIL_HOST }}
+          email-password: ${{ secrets.EMAIL_PASSWORD }}
+          email-user: ${{ secrets.EMAIL_USER }}
+          jwt-secret: ${{ secrets.JWT_SECRET }}
+          # env
+          our-env: dev
+          image-name: mcdominik/ice-bunch-backend-dev
+          container-port: 5137
+          frontend-url: ${{ secrets.FRONTEND_URL_DEV }}
+          backend-url: ${{ secrets.BACKEND_URL_DEV }}
+          mongo-host: ${{ secrets.MONGO_HOST_DEV }}
+          mongo-password: ${{ secrets.MONGO_PASSWORD_DEV }}
+          cloudinary-api-key: ${{ secrets.CLOUDINARY_API_KEY }}
+          cloudinary-api-secret: ${{ secrets.CLOUDINARY_API_SECRET }}
+          cloudinary-name: ${{ secrets.CLOUDINARY_NAME }}

@@ -8,6 +8,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { IceCreamsModule } from './ice-creams/ice-creams.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({})
 export class AppModule {
@@ -25,13 +26,14 @@ export class AppModule {
           }@${options?.mongoHost ?? process.env.MONGO_HOST}/admin`,
           { dbName: 'icebunch' },
         ),
+        CacheModule.register({}),
         AuthModule,
         CloudinaryModule,
         UsersModule,
         MailsModule,
         UserProfileModule,
         IceCreamsModule,
-        ReviewsModule
+        ReviewsModule,
       ],
     };
   }
